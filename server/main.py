@@ -1,7 +1,7 @@
 import asyncio
 import websockets
 
-async def echo(websocket, path):
+async def echo(websocket):
     """
     Handles incoming websocket connections and echoes received messages.
     """
