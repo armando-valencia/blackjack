@@ -105,33 +105,33 @@ class BlackjackGame:
                 self.message = GameMessage.PLAYER_PUSH.value
 
     def get_game_state_for_frontend(self, reveal_dealer_hand: bool = False) -> dict:
-         """
-         Prepares the game state to be sent to the frontend,
-         hiding the dealer's second card if not revealed.
-         """
-         dealer_hand_for_frontend = []
-         if self.dealer_hand:
-             dealer_hand_for_frontend.append(str(self.dealer_hand[0])) # Always show first card
-             if reveal_dealer_hand:
-                 # Show all dealer cards
-                 for card in self.dealer_hand[1:]:
-                     dealer_hand_for_frontend.append(str(card))
-             else:
-                 # Hide the second card and any subsequent cards
-                 dealer_hand_for_frontend.append("Hidden")
+        """
+        Prepares the game state to be sent to the frontend,
+        hiding the dealer's second card if not revealed.
+        """
+        dealer_hand_for_frontend = []
+        if self.dealer_hand:
+            dealer_hand_for_frontend.append(str(self.dealer_hand[0])) # Always show first card
+            if reveal_dealer_hand:
+                # Show all dealer cards
+                for card in self.dealer_hand[1:]:
+                    dealer_hand_for_frontend.append(str(card))
+            else:
+                # Hide the second card and any subsequent cards
+                dealer_hand_for_frontend.append("Hidden")
 
 
-         return {
-             "type": "game_state",
-             "player_hand": [str(card) for card in self.player_hand],
-             "dealer_hand": dealer_hand_for_frontend,
-             "player_score": self.player_score,
-             # Don't send full dealer score if not revealed, frontend can calculate visible score
-             "dealer_score": calculate_hand_value([self.dealer_hand[0]]) if not reveal_dealer_hand and self.dealer_hand else 0,
-             "game_status": self.game_status,
-             "message": self.message,
-             "result": self.result
-         }
+        return {
+            "type": "game_state",
+            "player_hand": [str(card) for card in self.player_hand],
+            "dealer_hand": dealer_hand_for_frontend,
+            "player_score": self.player_score,
+            # Don't send full dealer score if not revealed, frontend can calculate visible score
+            "dealer_score": calculate_hand_value([self.dealer_hand[0]]) if not reveal_dealer_hand and self.dealer_hand else 0,
+            "game_status": self.game_status,
+            "message": self.message,
+            "result": self.result
+        }
 
 
     def get_game_over_state_for_frontend(self) -> dict:
