@@ -26,9 +26,7 @@ const Card: React.FC<CardProps> = ({ card }) => {
 	const getCardValue = (card: string): CardValue => {
 		const rankString = card.substring(0, card.length - 1);
 		const parsedRank = parseInt(rankString);
-		const rank: string | number = isNaN(parsedRank)
-			? rankString
-			: parsedRank;
+		const rank: string | number = isNaN(parsedRank) ? rankString : parsedRank;
 		const suit: string = suitMapper[card.charAt(card.length - 1)];
 
 		return {
@@ -48,9 +46,7 @@ const Card: React.FC<CardProps> = ({ card }) => {
 	) : (
 		<div className={`${cardTemplate} bg-white`}>
 			<div className="flex justify-start">{cardValue?.rank}</div>
-			<div className="flex justify-center items-center flex-grow">
-				{cardValue?.suit}
-			</div>
+			<div className="flex justify-center items-center flex-grow">{cardValue?.suit}</div>
 			<div className="flex justify-end">{cardValue?.rank}</div>
 		</div>
 	);
