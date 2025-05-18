@@ -23,21 +23,14 @@ function App() {
 			try {
 				const serverMessage: ServerMessage = JSON.parse(event.data);
 
-				if (
-					serverMessage.type === "game_state" ||
-					serverMessage.type === "game_over"
-				) {
+				if (serverMessage.type === "game_state" || serverMessage.type === "game_over") {
 					// If it's a game state update, set the game state
 					setGame(serverMessage);
 				} else if (serverMessage.type === "error") {
 					console.error("Server Error:", serverMessage.message);
 				}
 			} catch (error) {
-				console.error(
-					"Failed to parse message from server:",
-					event.data,
-					error
-				);
+				console.error("Failed to parse message from server:", event.data, error);
 			}
 		};
 
@@ -46,11 +39,7 @@ function App() {
 		};
 
 		ws.onclose = (event: CloseEvent) => {
-			console.log(
-				"WebSocket connection closed:",
-				event.code,
-				event.reason
-			);
+			console.log("WebSocket connection closed:", event.code, event.reason);
 			setWebsocket(null);
 		};
 
@@ -78,8 +67,7 @@ function App() {
 
 	return (
 		<div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-			<h1 className="text-3xl font-bold mb-4">Blackjack</h1>{" "}
-			{/* Connection Status */}
+			<h1 className="text-3xl font-bold mb-4">Blackjack</h1> {/* Connection Status */}
 			{!websocket || websocket.readyState !== WebSocket.OPEN ? (
 				<p className="mt-2 text-center text-red-500">
 					Not connected. Ensure the Python server is running.
@@ -99,14 +87,11 @@ function App() {
 					{game.message && (
 						<p
 							className={`text-lg font-medium mb-4 ${
-								game.game_status === "game_over" &&
-								game.result === "win"
+								game.game_status === "game_over" && game.result === "win"
 									? "text-green-600"
-									: game.game_status === "game_over" &&
-									  game.result === "lose"
+									: game.game_status === "game_over" && game.result === "lose"
 									? "text-red-600"
-									: game.game_status === "game_over" &&
-									  game.result === "push"
+									: game.game_status === "game_over" && game.result === "push"
 									? "text-blue-600"
 									: ""
 							}`}
@@ -115,7 +100,7 @@ function App() {
 						</p>
 					)}
 
-					{/* Player's Hand */}
+					{/* player's hand */}
 					<Hand
 						cards={game.player_hand}
 						score={game.player_score}
