@@ -1,6 +1,6 @@
 # Blackjack
 
-A simple single player Blackjack game using React for the frontend and Python for the backend, communicating via WebSockets.
+A simple single player Blackjack game using React for the frontend and Python for the backend, communicating via websockets.
 
 ## Project Structure
 
@@ -84,6 +84,6 @@ A simple single player Blackjack game using React for the frontend and Python fo
 
 ### **Open the app in your browser:**
 
-With both the client and server now running, open a web browser and go to `http://localhost:5173` to see the app in action.
+With both the client and server running, open a web browser and go to `http://localhost:5173` to see the app in action.
 
 > After running `npm run dev`, you should see a message in the terminal indicating the app is running with a local URL (should be `http://localhost:5173`). You can click on this link or copy and paste it into your web browser to view the app.
