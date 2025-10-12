@@ -134,11 +134,13 @@ class BlackjackGame:
                 self.result = GameResult.PUSH.value
                 self.message = GameMessage.PLAYER_PUSH.value
 
+
     def handle_deck_exhaustion(self):
         """Handle case where deck runs out of cards"""
         self.game_status = GameStatus.GAME_OVER.value
         self.result = GameResult.PUSH.value
         self.message = GameMessage.DECK_EXHAUSTED.value
+
 
     def get_game_state_for_frontend(self, reveal_dealer_hand: bool = False) -> dict:
         """
