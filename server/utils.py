@@ -19,6 +19,7 @@ class GameMessage(enum.Enum):
     DEALER_BUST = "Dealer busts! You win!"
     DEALER_TURN = "Dealer is playing..."
     DEALING = "Dealing hand..."
+    DECK_EXHAUSTED = "Deck exhausted. Game ends in a push."
     PLAYER_BUST = "Bust! You lose."
     PLAYER_HIT = "You hit."
     PLAYER_LOSES = "You lose."
@@ -26,3 +27,6 @@ class GameMessage(enum.Enum):
     PLAYER_STAND = "You stand. Dealer's turn."
     PLAYER_TURN = "Hit or Stand?"
     PLAYER_WINS = "You win!"
+
+# Constants
+HIDDEN_CARD = "Hidden"

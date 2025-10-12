@@ -16,7 +16,6 @@ export interface GameOverState extends BaseGameState {
 	type: "game_over";
 }
 
-// Define the ErrorMessage interface
 export interface ErrorMessage {
 	type: "error";
 	message: string;

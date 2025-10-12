@@ -1,6 +1,6 @@
 from game.cards import Card, create_deck
 from game.hand import calculate_hand_value
-from utils import GameStatus, GameResult, GameMessage
+from utils import GameStatus, GameResult, GameMessage, HIDDEN_CARD
 
 class BlackjackGame:
     def __init__(self):
@@ -12,6 +12,19 @@ class BlackjackGame:
         self.game_status: str = GameStatus.WAITING.value
         self.result: str | None = None
         self.message: str = "" # Message to send to the frontend
+
+    def _is_blackjack(self, hand: list[Card]) -> bool:
+        """
+        Check if a hand is a true Blackjack (Ace + 10-value card on initial deal).
+        Only valid for 2-card hands.
+        """
+        if len(hand) != 2:
+            return False
+
+        has_ace = any(card.rank == 'A' for card in hand)
+        has_ten_value = any(card.rank in ('10', 'J', 'Q', 'K') for card in hand)
+
+        return has_ace and has_ten_value
 
     def deal_initial_hand(self):
         self.deck = create_deck() # Reset deck for a new hand
@@ -31,16 +44,19 @@ class BlackjackGame:
         self.player_score = calculate_hand_value(self.player_hand)
         self.dealer_score = calculate_hand_value(self.dealer_hand) # Full score for logic, but frontend only sees partial
 
-        # Check for initial Blackjack
-        if self.player_score == 21 and self.dealer_score == 21:
+        # Check for initial Blackjack (Ace + 10-value card)
+        player_has_blackjack = self._is_blackjack(self.player_hand)
+        dealer_has_blackjack = self._is_blackjack(self.dealer_hand)
+
+        if player_has_blackjack and dealer_has_blackjack:
             self.game_status = GameStatus.GAME_OVER.value
             self.result = GameResult.PUSH.value
             self.message = GameMessage.BOTH_BLACKJACK.value
-        elif self.player_score == 21:
+        elif player_has_blackjack:
             self.game_status = GameStatus.GAME_OVER.value
             self.result = GameResult.WIN.value
             self.message = GameMessage.BLACKJACK.value
-        elif self.dealer_score == 21:
+        elif dealer_has_blackjack:
              self.game_status = GameStatus.GAME_OVER.value
              self.result = GameResult.LOSE.value
              self.message = GameMessage.DEALER_BLACKJACK.value
@@ -50,8 +66,13 @@ class BlackjackGame:
 
 
     def player_hit(self) -> bool: # Returns True if game is over (bust)
-        if self.game_status != GameStatus.PLAYER_TURN.value or not self.deck:
+        if self.game_status != GameStatus.PLAYER_TURN.value:
             return False # Cannot hit
+
+        # Check if deck is exhausted
+        if not self.deck:
+            self.handle_deck_exhaustion()
+            return True
 
         self.player_hand.append(self.deck.pop())
         self.player_score = calculate_hand_value(self.player_hand)
@@ -61,6 +82,10 @@ class BlackjackGame:
             self.game_status = GameStatus.GAME_OVER.value
             self.result = GameResult.LOSE.value
             self.message = GameMessage.PLAYER_BUST.value
+            return True
+        elif self.player_score == 21:
+            # stand when player reaches 21
+            self.player_stand()
             return True
         return False
 
@@ -79,10 +104,15 @@ class BlackjackGame:
 
         self.message = GameMessage.DEALER_TURN.value
         # Dealer hits until score is 17 or more
-        while self.dealer_score < 17 and self.deck:
+        while self.dealer_score < 17:
+            # Check if deck is exhausted
+            if not self.deck:
+                self.handle_deck_exhaustion()
+                return
+
             self.dealer_hand.append(self.deck.pop())
             self.dealer_score = calculate_hand_value(self.dealer_hand)
-            self.message += " Dealer hits." # Append to message
+            self.message += " Dealer hits."
 
 
         if self.dealer_score > 21:
@@ -104,6 +134,12 @@ class BlackjackGame:
                 self.result = GameResult.PUSH.value
                 self.message = GameMessage.PLAYER_PUSH.value
 
+    def handle_deck_exhaustion(self):
+        """Handle case where deck runs out of cards"""
+        self.game_status = GameStatus.GAME_OVER.value
+        self.result = GameResult.PUSH.value
+        self.message = GameMessage.DECK_EXHAUSTED.value
+
     def get_game_state_for_frontend(self, reveal_dealer_hand: bool = False) -> dict:
         """
         Prepares the game state to be sent to the frontend,
@@ -118,7 +154,7 @@ class BlackjackGame:
                     dealer_hand_for_frontend.append(str(card))
             else:
                 # Hide the second card and any subsequent cards
-                dealer_hand_for_frontend.append("Hidden")
+                dealer_hand_for_frontend.append(HIDDEN_CARD)
 
 
         return {
@@ -127,7 +163,7 @@ class BlackjackGame:
             "dealer_hand": dealer_hand_for_frontend,
             "player_score": self.player_score,
             # Don't send full dealer score if not revealed, frontend can calculate visible score
-            "dealer_score": calculate_hand_value([self.dealer_hand[0]]) if not reveal_dealer_hand and self.dealer_hand else 0,
+            "dealer_score": calculate_hand_value([self.dealer_hand[0]]) if self.dealer_hand and not reveal_dealer_hand else 0,
             "game_status": self.game_status,
             "message": self.message,
             "result": self.result
