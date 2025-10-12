@@ -3,19 +3,30 @@ import "./App.css";
 import type {
 	GameState,
 	GameOverState,
-	// ErrorMessage,
 	ControlMessage,
 	ServerMessage,
 } from "./interfaces/game_interfaces";
 import Hand from "./components/Hand";
 
+type ConnectionStatus = "connecting" | "connected" | "disconnected" | "error";
+
 function App() {
 	const [game, setGame] = useState<GameState | GameOverState | null>(null);
 	const [websocket, setWebsocket] = useState<WebSocket | null>(null);
+	const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>("connecting");
+	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
 	useEffect(() => {
 		console.log("Attempting to connect to WebSocket...");
+		setConnectionStatus("connecting");
+		setErrorMessage(null);
 		const ws = new WebSocket("ws://localhost:8765");
+
+		ws.onopen = () => {
+			console.log("WebSocket connected");
+			setConnectionStatus("connected");
+			setErrorMessage(null);
+		};
 
 		ws.onmessage = (event: MessageEvent) => {
 			console.log("Message from server:", event.data);
@@ -26,21 +37,31 @@ function App() {
 				if (serverMessage.type === "game_state" || serverMessage.type === "game_over") {
 					// If it's a game state update, set the game state
 					setGame(serverMessage);
+					setErrorMessage(null);
 				} else if (serverMessage.type === "error") {
 					console.error("Server Error:", serverMessage.message);
+					setErrorMessage(serverMessage.message);
 				}
 			} catch (error) {
 				console.error("Failed to parse message from server:", event.data, error);
+				setErrorMessage("Failed to parse server message");
 			}
 		};
 
 		ws.onerror = () => {
 			console.error("WebSocket error: See console for details.");
+			setConnectionStatus("error");
+			setErrorMessage("Connection error. Please ensure the server is running.");
 		};
 
 		ws.onclose = (event: CloseEvent) => {
 			console.log("WebSocket connection closed:", event.code, event.reason);
 			setWebsocket(null);
+			setConnectionStatus("disconnected");
+			if (event.code !== 1000) {
+				// 1000 is normal closure
+				setErrorMessage("Connection lost. Please refresh the page.");
+			}
 		};
 
 		setWebsocket(ws);
@@ -67,12 +88,32 @@ function App() {
 
 	return (
 		<div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-			<h1 className="text-3xl font-bold mb-4">Blackjack</h1> {/* Connection Status */}
-			{!websocket || websocket.readyState !== WebSocket.OPEN ? (
+			<h1 className="text-3xl font-bold mb-4">Blackjack</h1>
+
+			{/* Connection Status */}
+			{connectionStatus === "connecting" && (
+				<p className="mt-2 text-center text-yellow-600">
+					Connecting to server...
+				</p>
+			)}
+			{connectionStatus === "connected" && !errorMessage && (
+				<p className="mt-2 text-center text-green-600">
+					Connected
+				</p>
+			)}
+			{(connectionStatus === "disconnected" || connectionStatus === "error") && (
 				<p className="mt-2 text-center text-red-500">
 					Not connected. Ensure the Python server is running.
 				</p>
-			) : null}
+			)}
+
+			{/* Error Messages */}
+			{errorMessage && (
+				<div className="mt-2 p-3 bg-red-100 border border-red-400 text-red-700 rounded max-w-md text-center">
+					{errorMessage}
+				</div>
+			)}
+
 			{/* Game Area - Only show if game state exists */}
 			{game ? (
 				<div className="w-full max-w-md bg-white p-6 rounded shadow-md text-center">
@@ -127,7 +168,7 @@ function App() {
 							</button>
 							<button
 								onClick={() => sendControlMessage("stand")} // Call the new function
-								className="p-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:ring focus::border-red-300"
+								className="p-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:ring focus:border-red-300"
 							>
 								Stand
 							</button>
