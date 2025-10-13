@@ -93,3 +93,4 @@ With both the client and server running, open a web browser and go to `http://lo
 - Improve UI/UX with better styling and animations
 - Add online multiplayer support
 - Add free for all mode (multiple players against each other)
+- Add more randomness to bot behavior
