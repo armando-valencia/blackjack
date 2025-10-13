@@ -2,7 +2,7 @@ import React from "react";
 
 interface GameMessageProps {
 	message: string;
-	gameStatus: "waiting" | "player_turn" | "dealer_turn" | "game_over";
+	gameStatus: "waiting" | "playing" | "dealer_turn" | "game_over";
 	result: "win" | "lose" | "push" | null;
 }
 

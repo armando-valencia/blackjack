@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import type { GameState, GameOverState, ControlMessage, ServerMessage } from "../interfaces/game_interfaces";
+import type { MultiplayerGameState, ControlMessage, ServerMessage } from "../interfaces/game_interfaces";
 
 type ConnectionStatus = "connecting" | "connected" | "disconnected" | "error";
 
 interface UseWebSocketReturn {
-	game: GameState | GameOverState | null;
+	game: MultiplayerGameState | null;
 	connectionStatus: ConnectionStatus;
 	errorMessage: string | null;
-	sendControlMessage: (type: ControlMessage["type"]) => void;
+	sendControlMessage: (type: ControlMessage["type"], numPlayers?: number) => void;
 }
 
 export const useWebSocket = (url: string): UseWebSocketReturn => {
-	const [game, setGame] = useState<GameState | GameOverState | null>(null);
+	const [game, setGame] = useState<MultiplayerGameState | null>(null);
 	const [websocket, setWebsocket] = useState<WebSocket | null>(null);
 	const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>("connecting");
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -73,9 +73,9 @@ export const useWebSocket = (url: string): UseWebSocketReturn => {
 		};
 	}, [url]);
 
-	const sendControlMessage = (type: ControlMessage["type"]) => {
+	const sendControlMessage = (type: ControlMessage["type"], numPlayers?: number) => {
 		if (websocket && websocket.readyState === WebSocket.OPEN) {
-			const message: ControlMessage = { type };
+			const message: ControlMessage = { type, ...(numPlayers && { num_players: numPlayers }) };
 			console.log("Sending message:", message);
 			websocket.send(JSON.stringify(message));
 		} else {
