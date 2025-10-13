@@ -9,6 +9,7 @@ A single-player Blackjack game with a React frontend (Vite + TypeScript + Tailwi
 ## Development Commands
 
 ### Backend (Python)
+
 ```bash
 # From project root - activate virtual environment
 .\.venv\Scripts\activate  # Windows
@@ -25,6 +26,7 @@ deactivate
 ```
 
 ### Frontend (React)
+
 ```bash
 # From client/ directory
 npm install           # Install dependencies
@@ -37,6 +39,7 @@ npm run preview      # Preview production build
 ## Architecture
 
 ### Backend Structure
+
 - **[server/main.py](server/main.py)**: Entry point - starts WebSocket server on localhost:8765
 - **[server/websocket_handler.py](server/websocket_handler.py)**: WebSocket handler - manages connections, routes messages, maintains one `BlackjackGame` instance per WebSocket connection in `active_games` dict
 - **[server/game/logic.py](server/game/logic.py)**: Core game logic in `BlackjackGame` class - manages deck, hands, scoring, game states (waiting/player_turn/dealer_turn/game_over)
@@ -45,6 +48,7 @@ npm run preview      # Preview production build
 - **[server/utils.py](server/utils.py)**: Enums for GameStatus, GameResult, GameMessage
 
 ### Frontend Structure
+
 - **[client/src/App.tsx](client/src/App.tsx)**: Main component - establishes WebSocket connection, handles messages, renders game UI
 - **[client/src/components/Hand.tsx](client/src/components/Hand.tsx)**: Displays a hand of cards with score
 - **[client/src/components/Card.tsx](client/src/components/Card.tsx)**: Displays individual card
@@ -53,6 +57,7 @@ npm run preview      # Preview production build
 ### Communication Protocol
 
 **Client → Server** (ControlMessage):
+
 ```json
 {"type": "deal_initial"}  // Start new hand
 {"type": "hit"}           // Player requests card
@@ -60,6 +65,7 @@ npm run preview      # Preview production build
 ```
 
 **Server → Client** (ServerMessage):
+
 ```json
 // During gameplay - dealer's hole card hidden
 {"type": "game_state", "player_hand": [...], "dealer_hand": [..., "Hidden"], "player_score": 18, "dealer_score": 10, "game_status": "player_turn", "message": "...", "result": null}
@@ -84,3 +90,7 @@ npm run preview      # Preview production build
 - Styling via **Tailwind CSS v4** (using Vite plugin)
 - Backend uses **websockets** library (only dependency)
 - TypeScript strict mode enabled ([client/tsconfig.json](client/tsconfig.json))
+
+## Additional Notes
+
+- NEVER use any emojis in any code you write.
