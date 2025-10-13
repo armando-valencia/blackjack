@@ -165,7 +165,7 @@ class BlackjackGame:
             "dealer_hand": dealer_hand_for_frontend,
             "player_score": self.player_score,
             # Don't send full dealer score if not revealed, frontend can calculate visible score
-            "dealer_score": calculate_hand_value([self.dealer_hand[0]]) if self.dealer_hand and not reveal_dealer_hand else 0,
+            "dealer_score": calculate_hand_value([self.dealer_hand[0]]) if self.dealer_hand and not reveal_dealer_hand else self.dealer_score,
             "game_status": self.game_status,
             "message": self.message,
             "result": self.result
