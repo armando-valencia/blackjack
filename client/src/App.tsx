@@ -3,9 +3,17 @@ import { useWebSocket } from "./hooks/useWebSocket";
 import ConnectionStatus from "./components/ConnectionStatus";
 import ErrorToast from "./components/ErrorToast";
 import GameBoard from "./components/GameBoard";
+import PlayerSelect from "./components/PlayerSelect";
 
 function App() {
 	const { game, connectionStatus, errorMessage, sendControlMessage } = useWebSocket("ws://localhost:8765");
+
+	const handlePlayerCountSelect = (count: number) => {
+		sendControlMessage("set_player_count", count);
+	};
+
+	const showPlayerSelect = game && game.game_status === "waiting" && game.players.length === 0;
+	const showGameBoard = game && game.players.length > 0;
 
 	return (
 		<div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#0a0e17] via-[#121621] to-[#0a0e17] p-4 md:p-8 relative">
@@ -24,17 +32,21 @@ function App() {
 					<div className="h-px w-32 mx-auto bg-gradient-to-r from-transparent via-slate-600 to-transparent" />
 				</div>
 
-				{game ? (
+				{showPlayerSelect && <PlayerSelect onSelectPlayerCount={handlePlayerCountSelect} />}
+
+				{showGameBoard && (
 					<GameBoard
 						game={game}
 						onDeal={() => sendControlMessage("deal_initial")}
 						onHit={() => sendControlMessage("hit")}
 						onStand={() => sendControlMessage("stand")}
 					/>
-				) : (
+				)}
+
+				{!game && (
 					<div className="flex justify-center">
 						<div className="bg-slate-900/60 backdrop-blur-2xl border border-slate-700/30 px-8 py-4 rounded-xl">
-							<p className="text-slate-400 text-base">Initializing game...</p>
+							<p className="text-slate-400 text-base">Connecting to server...</p>
 						</div>
 					</div>
 				)}

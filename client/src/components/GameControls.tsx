@@ -2,13 +2,14 @@ import React from "react";
 import Button from "./Button";
 
 interface GameControlsProps {
-	gameStatus: "waiting" | "player_turn" | "dealer_turn" | "game_over";
+	gameStatus: "waiting" | "playing" | "dealer_turn" | "game_over";
 	onDeal: () => void;
 	onHit: () => void;
 	onStand: () => void;
+	isHumanTurn: boolean;
 }
 
-const GameControls: React.FC<GameControlsProps> = ({ gameStatus, onDeal, onHit, onStand }) => {
+const GameControls: React.FC<GameControlsProps> = ({ gameStatus, onDeal, onHit, onStand, isHumanTurn }) => {
 	if (gameStatus === "waiting") {
 		return (
 			<div className="flex justify-center">
@@ -19,7 +20,7 @@ const GameControls: React.FC<GameControlsProps> = ({ gameStatus, onDeal, onHit, 
 		);
 	}
 
-	if (gameStatus === "player_turn") {
+	if (gameStatus === "playing" && isHumanTurn) {
 		return (
 			<div className="flex flex-col sm:flex-row justify-center gap-3">
 				<Button onClick={onHit} variant="hit">

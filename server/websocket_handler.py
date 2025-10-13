@@ -3,16 +3,77 @@ import websockets
 import json
 from game.logic import BlackjackGame
 
+# Store active games and their connected clients
 active_games = {}
+game_clients = {}  # Maps game_id to list of websockets
+
+
+async def broadcast_to_clients(game_id: str, message: dict):
+    """Broadcast a message to all clients connected to a game"""
+    if game_id in game_clients:
+        # Send to all connected clients
+        disconnected_clients = []
+        for client in game_clients[game_id]:
+            try:
+                await client.send(json.dumps(message))
+            except websockets.exceptions.ConnectionClosed:
+                disconnected_clients.append(client)
+
+        # Clean up disconnected clients
+        for client in disconnected_clients:
+            game_clients[game_id].remove(client)
+
+
+async def process_bot_turns(game: BlackjackGame, game_id: str):
+    """
+    Process all consecutive bot turns automatically.
+    Broadcasts state after each bot action.
+    """
+    while game.game_status == "playing":
+        current_player = game.players[game.current_player_index]
+
+        # If current player is human, stop and wait for their input
+        if current_player.is_human:
+            break
+
+        # Process bot turn
+        await asyncio.sleep(0.8)  # Small delay for visual clarity
+        bot_action = game.process_bot_turn()
+
+        if bot_action["action"] is None:
+            break
+
+        # Broadcast updated state after bot action
+        state = game.get_game_state_for_frontend()
+        await broadcast_to_clients(game_id, state)
+
+        # If bot's turn didn't end (they hit and didn't bust/reach 21), continue
+        if not bot_action["turn_ended"]:
+            # Bot will take another action
+            continue
+        else:
+            # Bot's turn ended, check if next player is also a bot
+            continue
+
 
 async def handler(websocket):
     """Handles incoming websocket connections and game messages from clients"""
     print("Client connected")
-    game = BlackjackGame()
-    active_games[websocket] = game # Store the game instance
+
+    # For now, use a single shared game (Phase 1 - local multiplayer)
+    # In Phase 2, we'll use room codes
+    game_id = "default_game"
+
+    if game_id not in active_games:
+        game = BlackjackGame()
+        active_games[game_id] = game
+        game_clients[game_id] = []
+
+    game = active_games[game_id]
+    game_clients[game_id].append(websocket)
 
     try:
-        # Send initial state (waiting for deal)
+        # Send initial state
         initial_state = game.get_game_state_for_frontend()
         await websocket.send(json.dumps(initial_state))
 
@@ -21,50 +82,72 @@ async def handler(websocket):
             print(f"Received message: {message}")
             try:
                 request = json.loads(message)
-
                 print(f"Parsed request: {request}")
+
                 if message_type := request.get("type"):
-                    if message_type == "deal_initial":
+                    if message_type == "set_player_count":
+                        # Initialize game with specified number of players
+                        num_players = request.get("num_players", 2)
+                        game.initialize_players(num_players)
+                        print(f"Initialized game with {num_players} players")
+
+                        # Broadcast updated state to all clients
+                        state = game.get_game_state_for_frontend()
+                        await broadcast_to_clients(game_id, state)
+
+                    elif message_type == "deal_initial":
                         game.deal_initial_hand()
                         print(f"Game status after dealing: {game.game_status}")
 
-                        # Send the initial game state (dealer's second card hidden)
-                        await websocket.send(json.dumps(game.get_game_state_for_frontend()))
+                        # Broadcast initial deal to all clients
+                        state = game.get_game_state_for_frontend()
+                        await broadcast_to_clients(game_id, state)
 
-                        # If game is over immediately (Blackjack), send game_over state
-                        if game.game_status == "game_over":
-                            await asyncio.sleep(1) # Small delay for dramatic effect
-                            await websocket.send(json.dumps(game.get_game_over_state_for_frontend()))
+                        # If first player is a bot, process bot turns
+                        if game.game_status == "playing":
+                            await process_bot_turns(game, game_id)
 
                     elif message_type == "hit":
-                        if game.game_status == "player_turn":
-                            game_over_after_hit = game.player_hit()
+                        if game.game_status == "playing":
+                            current_player = game.players[game.current_player_index]
 
-                            # Send the updated game state (dealer's second card still hidden)
-                            await websocket.send(json.dumps(game.get_game_state_for_frontend()))
-                            if game_over_after_hit: # If bust after hitting
-                                await asyncio.sleep(1)
-                                await websocket.send(json.dumps(game.get_game_over_state_for_frontend()))
+                            # Only allow human player to hit
+                            if current_player.is_human:
+                                game.player_hit()
+
+                                # Broadcast updated state
+                                state = game.get_game_state_for_frontend()
+                                await broadcast_to_clients(game_id, state)
+
+                                # If player didn't bust/stand, they can hit again
+                                # If player's turn ended, process bot turns
+                                if game.game_status == "playing":
+                                    await process_bot_turns(game, game_id)
 
                     elif message_type == "stand":
-                        if game.game_status == "player_turn":
-                            game.player_stand()
+                        if game.game_status == "playing":
+                            current_player = game.players[game.current_player_index]
 
-                            # Send final game state (all cards revealed)
-                            await websocket.send(json.dumps(game.get_game_over_state_for_frontend()))
+                            # Only allow human player to stand
+                            if current_player.is_human:
+                                game.player_stand()
 
+                                # Broadcast updated state
+                                state = game.get_game_state_for_frontend()
+                                await broadcast_to_clients(game_id, state)
 
-                # TODO: Add error handling for invalid message types or game states
+                                # Process bot turns after human stands
+                                if game.game_status == "playing":
+                                    await process_bot_turns(game, game_id)
 
             except json.JSONDecodeError:
                 print(f"Invalid JSON received: {message}")
-                # Optionally send an error message back to the client
                 await websocket.send(json.dumps({"type": "error", "message": "Invalid JSON format."}))
             except Exception as e:
-                 print(f"Error processing message: {e}")
-                 import traceback; traceback.print_exc()
-                 await websocket.send(json.dumps({"type": "error", "message": f"Server error: {e}"}))
-
+                print(f"Error processing message: {e}")
+                import traceback
+                traceback.print_exc()
+                await websocket.send(json.dumps({"type": "error", "message": f"Server error: {e}"}))
 
     except websockets.exceptions.ConnectionClosedOK:
         print("Client disconnected normally")
@@ -72,6 +155,13 @@ async def handler(websocket):
         print(f"Client disconnected with error: {e}")
     finally:
         print("Client connection closed")
-        # Clean up the game instance when the client disconnects
-        if websocket in active_games:
-            del active_games[websocket]
+        # Remove websocket from game clients
+        if game_id in game_clients and websocket in game_clients[game_id]:
+            game_clients[game_id].remove(websocket)
+
+        # Clean up game if no clients left
+        if game_id in game_clients and len(game_clients[game_id]) == 0:
+            print(f"No clients left for game {game_id}, cleaning up")
+            del game_clients[game_id]
+            if game_id in active_games:
+                del active_games[game_id]
