@@ -1,17 +1,20 @@
 from game.cards import Card, create_deck
 from game.hand import calculate_hand_value
+from game.player import PlayerState, PlayerStatus
+from game.bot_player import get_random_bot_name, make_bot_decision
 from utils import GameStatus, GameResult, GameMessage, HIDDEN_CARD
+
 
 class BlackjackGame:
     def __init__(self):
         self.deck: list[Card] = create_deck()
-        self.player_hand: list[Card] = []
+        self.players: list[PlayerState] = []
         self.dealer_hand: list[Card] = []
-        self.player_score: int = 0
         self.dealer_score: int = 0
         self.game_status: str = GameStatus.WAITING.value
-        self.result: str | None = None
-        self.message: str = "" # Message to send to the frontend
+        self.message: str = ""
+        self.current_player_index: int = 0
+        self.num_players: int = 0
 
     def _is_blackjack(self, hand: list[Card]) -> bool:
         """
@@ -26,83 +29,221 @@ class BlackjackGame:
 
         return has_ace and has_ten_value
 
+    def _get_turn_message(self, player_name: str) -> str:
+        """Get grammatically correct turn message for a player"""
+        if player_name == "You":
+            return "Your turn"
+        else:
+            return f"{player_name}'s turn"
+
+    def initialize_players(self, num_players: int):
+        """
+        Initialize players for the game.
+        First player is human, rest are bots with random names.
+        """
+        self.num_players = num_players
+        self.players = []
+        used_names = set()
+
+        # Create human player (always player 0)
+        human_player = PlayerState(player_id=0, name="You", is_human=True)
+        self.players.append(human_player)
+
+        # Create bot players
+        for i in range(1, num_players):
+            bot_name = get_random_bot_name(used_names)
+            used_names.add(bot_name)
+            bot_player = PlayerState(player_id=i, name=bot_name, is_human=False)
+            self.players.append(bot_player)
+
+        self.current_player_index = 0
+        self.game_status = GameStatus.WAITING.value
+        self.message = "Ready to deal!"
+
     def deal_initial_hand(self):
-        self.deck = create_deck() # Reset deck for a new hand
-        self.player_hand = []
+        """Deal initial cards to all players and dealer"""
+        if not self.players:
+            raise ValueError("No players initialized. Call initialize_players first.")
+
+        self.deck = create_deck()
         self.dealer_hand = []
-        self.result = None
+        self.current_player_index = 0
+
+        # Reset all players
+        for player in self.players:
+            player.reset_hand()
+
         self.message = GameMessage.DEALING.value
 
-        # Deal two cards to player
-        self.player_hand.append(self.deck.pop())
-        self.player_hand.append(self.deck.pop())
+        # Deal two cards to each player
+        for _ in range(2):
+            for player in self.players:
+                player.add_card(self.deck.pop())
 
-        # Deal two cards to dealer (one face up, one face down)
+        # Deal two cards to dealer
         self.dealer_hand.append(self.deck.pop())
-        self.dealer_hand.append(self.deck.pop()) # This will be the hidden card
+        self.dealer_hand.append(self.deck.pop())
+        self.dealer_score = calculate_hand_value(self.dealer_hand)
 
-        self.player_score = calculate_hand_value(self.player_hand)
-        self.dealer_score = calculate_hand_value(self.dealer_hand) # Full score for logic, but frontend only sees partial
-
-        # Check for initial Blackjack (Ace + 10-value card)
-        player_has_blackjack = self._is_blackjack(self.player_hand)
+        # Check for dealer blackjack
         dealer_has_blackjack = self._is_blackjack(self.dealer_hand)
 
-        if player_has_blackjack and dealer_has_blackjack:
+        # Check each player for blackjack
+        all_players_done = True
+        for player in self.players:
+            player_has_blackjack = self._is_blackjack(player.hand)
+
+            if player_has_blackjack and dealer_has_blackjack:
+                player.status = PlayerStatus.DONE.value
+                player.result = GameResult.PUSH.value
+            elif player_has_blackjack:
+                player.status = PlayerStatus.DONE.value
+                player.result = GameResult.WIN.value
+            elif dealer_has_blackjack:
+                player.status = PlayerStatus.DONE.value
+                player.result = GameResult.LOSE.value
+            else:
+                player.status = PlayerStatus.WAITING.value
+                all_players_done = False
+
+        # Determine game status
+        if dealer_has_blackjack:
             self.game_status = GameStatus.GAME_OVER.value
-            self.result = GameResult.PUSH.value
-            self.message = GameMessage.BOTH_BLACKJACK.value
-        elif player_has_blackjack:
+            self.message = GameMessage.DEALER_BLACKJACK.value
+        elif all_players_done:
             self.game_status = GameStatus.GAME_OVER.value
-            self.result = GameResult.WIN.value
-            self.message = GameMessage.BLACKJACK.value
-        elif dealer_has_blackjack:
-             self.game_status = GameStatus.GAME_OVER.value
-             self.result = GameResult.LOSE.value
-             self.message = GameMessage.DEALER_BLACKJACK.value
+            self.message = "All players have Blackjack!"
         else:
-             self.game_status = GameStatus.PLAYER_TURN.value
-             self.message = GameMessage.PLAYER_TURN.value
+            self.game_status = "playing"
+            # Find first player who needs to play
+            self.current_player_index = self._find_next_active_player(start_index=-1)
+            if self.current_player_index != -1:
+                self.players[self.current_player_index].status = PlayerStatus.PLAYING.value
+                self.message = self._get_turn_message(self.players[self.current_player_index].name)
 
+    def _find_next_active_player(self, start_index: int) -> int:
+        """
+        Find the next player who needs to play (status is WAITING).
+        Returns -1 if no more active players.
+        """
+        for i in range(start_index + 1, len(self.players)):
+            if self.players[i].status == PlayerStatus.WAITING.value:
+                return i
+        return -1
 
-    def player_hit(self) -> bool: # Returns True if game is over (bust)
-        if self.game_status != GameStatus.PLAYER_TURN.value:
-            return False # Cannot hit
+    def advance_to_next_player(self):
+        """Move to the next player's turn or dealer turn if all players done"""
+        next_player_index = self._find_next_active_player(self.current_player_index)
+
+        if next_player_index != -1:
+            # Move to next player
+            self.current_player_index = next_player_index
+            self.players[self.current_player_index].status = PlayerStatus.PLAYING.value
+            self.message = self._get_turn_message(self.players[self.current_player_index].name)
+        else:
+            # All players done, move to dealer turn
+            self.game_status = GameStatus.DEALER_TURN.value
+            self.message = GameMessage.DEALER_TURN.value
+            self.dealer_turn()
+
+    def player_hit(self, player_id: int | None = None) -> bool:
+        """
+        Player hits (draws a card).
+        Returns True if this action ended the player's turn (bust or 21).
+        """
+        if self.game_status != "playing":
+            return False
+
+        # Default to current player if no player_id specified
+        if player_id is None:
+            player_id = self.current_player_index
+
+        if player_id != self.current_player_index:
+            return False  # Not this player's turn
+
+        player = self.players[player_id]
+
+        if player.status != PlayerStatus.PLAYING.value:
+            return False
 
         # Check if deck is exhausted
         if not self.deck:
             self.handle_deck_exhaustion()
             return True
 
-        self.player_hand.append(self.deck.pop())
-        self.player_score = calculate_hand_value(self.player_hand)
-        self.message = GameMessage.PLAYER_HIT.value
+        player.add_card(self.deck.pop())
+        self.message = f"{player.name} hits"
 
-        if self.player_score > 21:
-            self.game_status = GameStatus.GAME_OVER.value
-            self.result = GameResult.LOSE.value
-            self.message = GameMessage.PLAYER_BUST.value
+        if player.score > 21:
+            # Player busts
+            player.status = PlayerStatus.BUST.value
+            player.result = GameResult.LOSE.value
+            self.message = f"{player.name} busts!"
+            self.advance_to_next_player()
             return True
-        elif self.player_score == 21:
-            # stand when player reaches 21
-            self.player_stand()
+        elif player.score == 21:
+            # Auto-stand at 21
+            player.status = PlayerStatus.STANDING.value
+            self.message = f"{player.name} stands at 21"
+            self.advance_to_next_player()
             return True
+
         return False
 
-    def player_stand(self):
-        if self.game_status != GameStatus.PLAYER_TURN.value:
+    def player_stand(self, player_id: int | None = None):
+        """Player stands (ends their turn)"""
+        if self.game_status != "playing":
             return
 
-        self.game_status = GameStatus.DEALER_TURN.value
-        self.message = GameMessage.PLAYER_STAND.value
-        self.dealer_turn()
+        # Default to current player if no player_id specified
+        if player_id is None:
+            player_id = self.current_player_index
 
+        if player_id != self.current_player_index:
+            return  # Not this player's turn
+
+        player = self.players[player_id]
+
+        if player.status != PlayerStatus.PLAYING.value:
+            return
+
+        player.status = PlayerStatus.STANDING.value
+        self.message = f"{player.name} stands"
+        self.advance_to_next_player()
+
+    def process_bot_turn(self) -> dict:
+        """
+        Process the current bot player's turn.
+        Returns action taken ("hit" or "stand") and whether turn ended.
+        """
+        if self.game_status != "playing":
+            return {"action": None, "turn_ended": False}
+
+        current_player = self.players[self.current_player_index]
+
+        if current_player.is_human or current_player.status != PlayerStatus.PLAYING.value:
+            return {"action": None, "turn_ended": False}
+
+        # Get dealer's upcard value
+        dealer_upcard_value = calculate_hand_value([self.dealer_hand[0]])
+
+        # Bot makes decision
+        action = make_bot_decision(current_player.score, dealer_upcard_value)
+
+        if action == "hit":
+            turn_ended = self.player_hit(self.current_player_index)
+            return {"action": "hit", "turn_ended": turn_ended}
+        else:  # stand
+            self.player_stand(self.current_player_index)
+            return {"action": "stand", "turn_ended": True}
 
     def dealer_turn(self):
+        """Dealer plays their hand"""
         if self.game_status != GameStatus.DEALER_TURN.value:
             return
 
         self.message = GameMessage.DEALER_TURN.value
+
         # Dealer hits until score is 17 or more
         while self.dealer_score < 17:
             # Check if deck is exhausted
@@ -114,75 +255,74 @@ class BlackjackGame:
             self.dealer_score = calculate_hand_value(self.dealer_hand)
             self.message += " Dealer hits."
 
+        # Determine results for each player
+        dealer_bust = self.dealer_score > 21
 
-        if self.dealer_score > 21:
-            self.game_status = GameStatus.GAME_OVER.value
-            self.result = GameResult.WIN.value
-            self.message = GameMessage.DEALER_BUST.value
-        else:
-            # Compare scores
-            if self.player_score > self.dealer_score:
-                self.game_status = GameStatus.GAME_OVER.value
-                self.result = GameResult.WIN.value
-                self.message = GameMessage.PLAYER_WINS.value
-            elif self.player_score < self.dealer_score:
-                self.game_status = GameStatus.GAME_OVER.value
-                self.result = GameResult.LOSE.value
-                self.message = GameMessage.PLAYER_LOSES.value
+        for player in self.players:
+            # Skip players who already have results (busted or blackjack)
+            if player.result is not None:
+                player.status = PlayerStatus.DONE.value
+                continue
+
+            if dealer_bust:
+                player.result = GameResult.WIN.value
+            elif player.score > self.dealer_score:
+                player.result = GameResult.WIN.value
+            elif player.score < self.dealer_score:
+                player.result = GameResult.LOSE.value
             else:
-                self.game_status = GameStatus.GAME_OVER.value
-                self.result = GameResult.PUSH.value
-                self.message = GameMessage.PLAYER_PUSH.value
+                player.result = GameResult.PUSH.value
 
+            player.status = PlayerStatus.DONE.value
+
+        self.game_status = GameStatus.GAME_OVER.value
+
+        if dealer_bust:
+            self.message = f"Dealer busts with {self.dealer_score}!"
+        else:
+            self.message = f"Dealer stands at {self.dealer_score} - Game Over"
 
     def handle_deck_exhaustion(self):
         """Handle case where deck runs out of cards"""
         self.game_status = GameStatus.GAME_OVER.value
-        self.result = GameResult.PUSH.value
+
+        # Set all remaining players to push
+        for player in self.players:
+            if player.result is None:
+                player.result = GameResult.PUSH.value
+                player.status = PlayerStatus.DONE.value
+
         self.message = GameMessage.DECK_EXHAUSTED.value
 
+    def get_game_state_for_frontend(self) -> dict:
+        """
+        Prepares the game state to be sent to the frontend.
+        Hides dealer's second card if game is still in progress.
+        """
+        # Determine if we should reveal dealer's hand
+        reveal_dealer_hand = self.game_status in [GameStatus.GAME_OVER.value, GameStatus.DEALER_TURN.value]
 
-    def get_game_state_for_frontend(self, reveal_dealer_hand: bool = False) -> dict:
-        """
-        Prepares the game state to be sent to the frontend,
-        hiding the dealer's second card if not revealed.
-        """
         dealer_hand_for_frontend = []
         if self.dealer_hand:
-            dealer_hand_for_frontend.append(str(self.dealer_hand[0])) # Always show first card
+            dealer_hand_for_frontend.append(str(self.dealer_hand[0]))
             if reveal_dealer_hand:
-                # Show all dealer cards
                 for card in self.dealer_hand[1:]:
                     dealer_hand_for_frontend.append(str(card))
             else:
-                # Hide the second card and any subsequent cards
                 dealer_hand_for_frontend.append(HIDDEN_CARD)
 
+        # Calculate dealer score for frontend
+        if reveal_dealer_hand:
+            dealer_score_for_frontend = self.dealer_score
+        else:
+            dealer_score_for_frontend = calculate_hand_value([self.dealer_hand[0]]) if self.dealer_hand else 0
 
         return {
-            "type": "game_state",
-            "player_hand": [str(card) for card in self.player_hand],
+            "type": "game_state" if self.game_status != GameStatus.GAME_OVER.value else "game_over",
+            "players": [player.to_dict() for player in self.players],
             "dealer_hand": dealer_hand_for_frontend,
-            "player_score": self.player_score,
-            # Don't send full dealer score if not revealed, frontend can calculate visible score
-            "dealer_score": calculate_hand_value([self.dealer_hand[0]]) if self.dealer_hand and not reveal_dealer_hand else self.dealer_score,
+            "dealer_score": dealer_score_for_frontend,
+            "current_player_index": self.current_player_index,
             "game_status": self.game_status,
-            "message": self.message,
-            "result": self.result
-        }
-
-
-    def get_game_over_state_for_frontend(self) -> dict:
-        """
-        Prepares the final game state for the frontend when the game is over.
-        """
-        return {
-            "type": "game_over",
-            "player_hand": [str(card) for card in self.player_hand],
-            "dealer_hand": [str(card) for card in self.dealer_hand], # All dealer cards revealed
-            "player_score": self.player_score,
-            "dealer_score": self.dealer_score, # Full dealer score revealed
-            "game_status": self.game_status,
-            "result": self.result,
             "message": self.message
         }
