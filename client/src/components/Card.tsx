@@ -1,53 +1,114 @@
 import { useEffect, useState } from "react";
 import { HIDDEN_CARD } from "../constants";
+import { colors } from "../theme";
 
 interface CardProps {
 	card: string;
+	index?: number;
 }
 
 interface CardValue {
 	rank: number | string;
 	suit: string;
+	suitSymbol: string;
+	isRed: boolean;
 }
 
-const cardTemplate =
-	"max-w-sm min-w-28 p-3 m-4 rounded-md shadow-md min-h-40 flex flex-col border border-gray-200 font-bold";
-
-const suitMapper: { [key: string]: string } = {
-	H: "♥️",
-	D: "♦️",
-	C: "♣️",
-	S: "♠️",
+const suitMapper: { [key: string]: { symbol: string; isRed: boolean } } = {
+	H: { symbol: "♥", isRed: true },
+	D: { symbol: "♦", isRed: true },
+	C: { symbol: "♣", isRed: false },
+	S: { symbol: "♠", isRed: false },
 };
 
 const getCardValue = (card: string): CardValue => {
 	const rankString = card.substring(0, card.length - 1);
 	const parsedRank = parseInt(rankString);
 	const rank: string | number = isNaN(parsedRank) ? rankString : parsedRank;
-	const suit: string = suitMapper[card.charAt(card.length - 1)];
+	const suitKey = card.charAt(card.length - 1);
+	const suitInfo = suitMapper[suitKey];
 
 	return {
 		rank: rank,
-		suit: suit,
+		suit: suitKey,
+		suitSymbol: suitInfo.symbol,
+		isRed: suitInfo.isRed,
 	};
 };
 
-const Card: React.FC<CardProps> = ({ card }) => {
+const Card: React.FC<CardProps> = ({ card, index = 0 }) => {
 	const [cardValue, setCardValue] = useState<CardValue | null>(null);
 
 	useEffect(() => {
 		if (card !== HIDDEN_CARD) setCardValue(getCardValue(card));
 	}, [card]);
 
+	const suitColor = cardValue?.isRed ? colors.redSuit : colors.blackSuit;
+	const animationDelay = `${index * 100}ms`;
+
 	return card === HIDDEN_CARD ? (
-		<div className={`${cardTemplate} bg-gray-300`}>
-			<div className="flex justify-center items-center flex-grow">?</div>
+		<div
+			className="
+				w-20 h-28 sm:w-24 sm:h-32 md:w-28 md:h-40
+				rounded-lg
+				flex flex-col items-center justify-center
+				bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900
+				shadow-[0_10px_40px_-10px_rgba(0,0,0,0.6)]
+				border-2 border-slate-600/50
+				animate-[flipIn_0.4s_ease-out]
+				relative
+				overflow-hidden
+			"
+			style={{ animationDelay }}
+		>
+			<div className="absolute inset-0 rounded-lg bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,rgba(255,255,255,0.03)_10px,rgba(255,255,255,0.03)_20px)]" />
+			<div className="absolute inset-[2px] rounded-lg bg-gradient-to-br from-slate-700/50 to-slate-900/50" />
 		</div>
 	) : (
-		<div className={`${cardTemplate} bg-white`}>
-			<div className="flex justify-start">{cardValue?.rank}</div>
-			<div className="flex justify-center items-center flex-grow">{cardValue?.suit}</div>
-			<div className="flex justify-end">{cardValue?.rank}</div>
+		<div
+			className="
+				w-20 h-28 sm:w-24 sm:h-32 md:w-28 md:h-40
+				rounded-lg
+				flex flex-col
+				bg-gradient-to-br from-white via-gray-50 to-gray-100
+				shadow-[0_10px_40px_-10px_rgba(0,0,0,0.6),0_2px_8px_-2px_rgba(0,0,0,0.3)]
+				border-2 border-gray-200
+				transform hover:scale-105 transition-all duration-300
+				animate-[slideIn_0.3s_ease-out]
+				relative
+				overflow-hidden
+			"
+			style={{ animationDelay }}
+		>
+			<div className="absolute inset-0 rounded-lg bg-gradient-to-br from-white/40 to-transparent pointer-events-none" />
+
+			<div className="flex justify-start p-1 md:p-1.5 z-10">
+				<div className="flex flex-col items-center leading-none gap-0">
+					<span className="text-sm md:text-lg font-bold" style={{ color: suitColor }}>
+						{cardValue?.rank}
+					</span>
+					<span className="text-xs md:text-sm" style={{ color: suitColor }}>
+						{cardValue?.suitSymbol}
+					</span>
+				</div>
+			</div>
+
+			<div className="flex justify-center items-center flex-grow z-10">
+				<span className="text-2xl md:text-4xl" style={{ color: suitColor }}>
+					{cardValue?.suitSymbol}
+				</span>
+			</div>
+
+			<div className="flex justify-end p-1 md:p-1.5 z-10">
+				<div className="flex flex-col items-center rotate-180 leading-none gap-0">
+					<span className="text-sm md:text-lg font-bold" style={{ color: suitColor }}>
+						{cardValue?.rank}
+					</span>
+					<span className="text-xs md:text-sm" style={{ color: suitColor }}>
+						{cardValue?.suitSymbol}
+					</span>
+				</div>
+			</div>
 		</div>
 	);
 };
