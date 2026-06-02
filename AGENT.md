@@ -12,8 +12,10 @@ This file is local project guidance for Codex and must remain untracked. It is n
 - Prefer a small, complete design over a narrow patch that creates avoidable follow-up work.
 - When repeated domain values appear, model them as named domain types or constants in the owning module rather than duplicating magic strings in tests and production code.
 - Keep test helpers close to the domain they exercise; do not hide production concepts behind test-only replacement constants.
+- Before closing stabilization, audit the repository for repeated domain and protocol magic strings and address them in a dedicated or feature-related change.
 - Preserve unrelated user changes.
 - Prefer well-named code over comments. Add comments only when naming cannot express the intent.
+- Keep docstrings to one concise sentence, preferably on a single line; move lengthy explanations into naming, tests, or documentation.
 - Do not use one-letter variables or ambiguous function names.
 - Python test names must follow `test__<function name>__<test case>`.
 - Run only the checks relevant to the current PR, then report results and a suggested commit message.

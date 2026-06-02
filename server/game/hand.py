@@ -1,4 +1,4 @@
-from game.cards import Card
+from game.cards import Card, Rank
     
 
 def calculate_hand_value(hand: list[Card]) -> int:
@@ -8,7 +8,7 @@ def calculate_hand_value(hand: list[Card]) -> int:
         in hand
     )
     # Adjust for Aces if busted
-    num_aces = sum(1 for card in hand if card.rank == 'A')
+    num_aces = sum(1 for card in hand if card.rank == Rank.ACE)
     while score > 21 and num_aces > 0:
         score -= 10
         num_aces -= 1
