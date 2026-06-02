@@ -96,6 +96,22 @@ From the project root, activate the virtual environment and run:
 pytest server/tests
 ```
 
+### Git workflow helpers
+
+After a PR is merged, sync the local base branch with:
+
+```bash
+./scripts/sync-main.sh
+```
+
+Start the next feature branch from the updated base with:
+
+```bash
+./scripts/start-feature.sh feature/example-name
+```
+
+These helpers refuse tracked changes and never commit, push, stash, reset, or delete files.
+
 ## Features to add
 
 - Improve UI/UX with better styling and animations

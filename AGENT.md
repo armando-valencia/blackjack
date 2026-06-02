@@ -43,6 +43,8 @@ After a PR is merged:
 
 Do not continue feature work from a stale branch after its PR has been merged.
 
+Use `scripts/sync-main.sh` and `scripts/start-feature.sh` for this workflow when the working tree has no tracked changes.
+
 ## Roadmap locations
 
 - Overview: `.agents/roadmap/README.md`
