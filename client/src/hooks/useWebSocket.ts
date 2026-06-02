@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
-import type { MultiplayerGameState, ControlMessage, ServerMessage } from "../interfaces/game_interfaces";
-
-type ConnectionStatus = "connecting" | "connected" | "disconnected" | "error";
+import {
+	CONNECTION_STATUS,
+	SERVER_MESSAGE_TYPE,
+} from "../constants";
+import type {
+	ConnectionStatus,
+	ControlMessage,
+	ControlMessageType,
+	MultiplayerGameState,
+	ServerMessage,
+} from "../interfaces/game_interfaces";
 
 interface UseWebSocketReturn {
 	game: MultiplayerGameState | null;
@@ -13,18 +21,18 @@ interface UseWebSocketReturn {
 export const useWebSocket = (url: string): UseWebSocketReturn => {
 	const [game, setGame] = useState<MultiplayerGameState | null>(null);
 	const [websocket, setWebsocket] = useState<WebSocket | null>(null);
-	const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>("connecting");
+	const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>(CONNECTION_STATUS.CONNECTING);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
 	useEffect(() => {
 		console.log("Attempting to connect to WebSocket...");
-		setConnectionStatus("connecting");
+		setConnectionStatus(CONNECTION_STATUS.CONNECTING);
 		setErrorMessage(null);
 		const ws = new WebSocket(url);
 
 		ws.onopen = () => {
 			console.log("WebSocket connected");
-			setConnectionStatus("connected");
+			setConnectionStatus(CONNECTION_STATUS.CONNECTED);
 			setErrorMessage(null);
 		};
 
@@ -34,10 +42,13 @@ export const useWebSocket = (url: string): UseWebSocketReturn => {
 			try {
 				const serverMessage: ServerMessage = JSON.parse(event.data);
 
-				if (serverMessage.type === "game_state" || serverMessage.type === "game_over") {
+				if (
+					serverMessage.type === SERVER_MESSAGE_TYPE.GAME_STATE ||
+					serverMessage.type === SERVER_MESSAGE_TYPE.GAME_OVER
+				) {
 					setGame(serverMessage);
 					setErrorMessage(null);
-				} else if (serverMessage.type === "error") {
+				} else if (serverMessage.type === SERVER_MESSAGE_TYPE.ERROR) {
 					console.error("Server Error:", serverMessage.message);
 					setErrorMessage(serverMessage.message);
 				}
@@ -49,14 +60,14 @@ export const useWebSocket = (url: string): UseWebSocketReturn => {
 
 		ws.onerror = () => {
 			console.error("WebSocket error: See console for details.");
-			setConnectionStatus("error");
+			setConnectionStatus(CONNECTION_STATUS.ERROR);
 			setErrorMessage("Connection error. Please ensure the server is running.");
 		};
 
 		ws.onclose = (event: CloseEvent) => {
 			console.log("WebSocket connection closed:", event.code, event.reason);
 			setWebsocket(null);
-			setConnectionStatus("disconnected");
+			setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
 			if (event.code !== 1000) {
 				setErrorMessage("Connection lost. Please refresh the page.");
 			}
@@ -73,7 +84,7 @@ export const useWebSocket = (url: string): UseWebSocketReturn => {
 		};
 	}, [url]);
 
-	const sendControlMessage = (type: ControlMessage["type"], numPlayers?: number) => {
+	const sendControlMessage = (type: ControlMessageType, numPlayers?: number) => {
 		if (websocket && websocket.readyState === WebSocket.OPEN) {
 			const message: ControlMessage = { type, ...(numPlayers && { num_players: numPlayers }) };
 			console.log("Sending message:", message);

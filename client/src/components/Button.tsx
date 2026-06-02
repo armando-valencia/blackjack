@@ -1,16 +1,18 @@
 import React from "react";
+import { BUTTON_VARIANT } from "../constants";
+import type { ButtonVariant } from "../interfaces/game_interfaces";
 
 interface ButtonProps {
 	onClick: () => void;
 	children: React.ReactNode;
-	variant?: "deal" | "hit" | "stand";
+	variant?: ButtonVariant;
 	className?: string;
 }
 
 const Button: React.FC<ButtonProps> = ({
 	onClick,
 	children,
-	variant = "deal",
+	variant = BUTTON_VARIANT.DEAL,
 	className = "",
 }) => {
 	const baseStyles = `
@@ -29,9 +31,9 @@ const Button: React.FC<ButtonProps> = ({
 	`;
 
 	const variantStyles = {
-		deal: "bg-gradient-to-b from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600",
-		hit: "bg-gradient-to-b from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600",
-		stand: "bg-gradient-to-b from-slate-600 to-slate-700 hover:from-slate-500 hover:to-slate-600",
+		[BUTTON_VARIANT.DEAL]: "bg-gradient-to-b from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600",
+		[BUTTON_VARIANT.HIT]: "bg-gradient-to-b from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600",
+		[BUTTON_VARIANT.STAND]: "bg-gradient-to-b from-slate-600 to-slate-700 hover:from-slate-500 hover:to-slate-600",
 	};
 
 	return (

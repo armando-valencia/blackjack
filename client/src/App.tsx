@@ -4,15 +4,16 @@ import ConnectionStatus from "./components/ConnectionStatus";
 import ErrorToast from "./components/ErrorToast";
 import GameBoard from "./components/GameBoard";
 import PlayerSelect from "./components/PlayerSelect";
+import { CONTROL_MESSAGE_TYPE, GAME_STATUS } from "./constants";
 
 function App() {
 	const { game, connectionStatus, errorMessage, sendControlMessage } = useWebSocket("ws://localhost:8765");
 
 	const handlePlayerCountSelect = (count: number) => {
-		sendControlMessage("set_player_count", count);
+		sendControlMessage(CONTROL_MESSAGE_TYPE.SET_PLAYER_COUNT, count);
 	};
 
-	const showPlayerSelect = game && game.game_status === "waiting" && game.players.length === 0;
+	const showPlayerSelect = game && game.game_status === GAME_STATUS.WAITING && game.players.length === 0;
 	const showGameBoard = game && game.players.length > 0;
 
 	return (
@@ -37,9 +38,9 @@ function App() {
 				{showGameBoard && (
 					<GameBoard
 						game={game}
-						onDeal={() => sendControlMessage("deal_initial")}
-						onHit={() => sendControlMessage("hit")}
-						onStand={() => sendControlMessage("stand")}
+						onDeal={() => sendControlMessage(CONTROL_MESSAGE_TYPE.DEAL_INITIAL)}
+						onHit={() => sendControlMessage(CONTROL_MESSAGE_TYPE.HIT)}
+						onStand={() => sendControlMessage(CONTROL_MESSAGE_TYPE.STAND)}
 					/>
 				)}
 

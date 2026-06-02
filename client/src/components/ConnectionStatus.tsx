@@ -1,28 +1,30 @@
 import React from "react";
+import { CONNECTION_STATUS } from "../constants";
+import type { ConnectionStatus as ConnectionStatusValue } from "../interfaces/game_interfaces";
 
 interface ConnectionStatusProps {
-	status: "connecting" | "connected" | "disconnected" | "error";
+	status: ConnectionStatusValue;
 	hasError: boolean;
 }
 
 const ConnectionStatus: React.FC<ConnectionStatusProps> = ({ status, hasError }) => {
 	const statusConfig = {
-		connecting: {
+	[CONNECTION_STATUS.CONNECTING]: {
 			color: "bg-yellow-400",
 			text: "Connecting...",
 			pulse: true,
 		},
-		connected: {
+	[CONNECTION_STATUS.CONNECTED]: {
 			color: "bg-emerald-400",
 			text: "Connected",
 			pulse: false,
 		},
-		disconnected: {
+	[CONNECTION_STATUS.DISCONNECTED]: {
 			color: "bg-red-400",
 			text: "Disconnected",
 			pulse: true,
 		},
-		error: {
+	[CONNECTION_STATUS.ERROR]: {
 			color: "bg-red-400",
 			text: "Disconnected",
 			pulse: true,
@@ -31,7 +33,7 @@ const ConnectionStatus: React.FC<ConnectionStatusProps> = ({ status, hasError })
 
 	const config = statusConfig[status];
 
-	if (status === "connected" && !hasError) {
+	if (status === CONNECTION_STATUS.CONNECTED && !hasError) {
 		return null;
 	}
 
