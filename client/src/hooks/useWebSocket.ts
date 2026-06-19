@@ -51,6 +51,8 @@ export const useWebSocket = (url: string): UseWebSocketReturn => {
 				} else if (serverMessage.type === SERVER_MESSAGE_TYPE.ERROR) {
 					console.error("Server Error:", serverMessage.message);
 					setErrorMessage(serverMessage.message);
+				} else if (serverMessage.type === SERVER_MESSAGE_TYPE.ACTION_RESULT) {
+					setErrorMessage(serverMessage.accepted ? null : serverMessage.message);
 				}
 			} catch (error) {
 				console.error("Failed to parse message from server:", event.data, error);

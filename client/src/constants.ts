@@ -24,6 +24,7 @@ export const GAME_RESULT = {
 export const SERVER_MESSAGE_TYPE = {
 	GAME_STATE: "game_state",
 	GAME_OVER: "game_over",
+	ACTION_RESULT: "action_result",
 	ERROR: "error",
 } as const;
 
