@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A single-player Blackjack game with a React frontend (Vite + TypeScript + Tailwind CSS) and Python backend (WebSocket server) communicating via WebSockets on localhost:8765.
+A local multiplayer Blackjack game with a React frontend (Vite + TypeScript + Tailwind CSS) and Python backend (WebSocket server) communicating via WebSockets on localhost:8765.
 
 ## Development Commands
 
@@ -23,6 +23,9 @@ python server/main.py  # python3 on macOS/Linux
 
 # Deactivate virtual environment when done
 deactivate
+
+# Run backend tests from the project root
+pytest server/tests
 ```
 
 ### Frontend (React)
@@ -33,6 +36,7 @@ npm install           # Install dependencies
 npm run dev          # Start dev server (http://localhost:5173)
 npm run build        # TypeScript compile + production build
 npm run lint         # Run ESLint
+npm run check        # Run lint and production build
 npm run preview      # Preview production build
 ```
 
@@ -61,6 +65,7 @@ npm run preview      # Preview production build
 **Client → Server** (ControlMessage):
 
 ```json
+{"type": "set_player_count", "num_players": 2}  // Configure the local session
 {"type": "deal_initial"}  // Start new hand
 {"type": "hit"}           // Player requests card
 {"type": "stand"}         // Player ends turn

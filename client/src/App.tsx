@@ -1,4 +1,4 @@
-import "./App.css";
+import "./index.css";
 import { useWebSocket } from "./hooks/useWebSocket";
 import ConnectionStatus from "./components/ConnectionStatus";
 import ErrorToast from "./components/ErrorToast";
