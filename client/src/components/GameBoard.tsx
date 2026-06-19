@@ -10,9 +10,10 @@ interface GameBoardProps {
 	onDeal: () => void;
 	onHit: () => void;
 	onStand: () => void;
+	isActionPending: boolean;
 }
 
-const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand }) => {
+const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand, isActionPending }) => {
 	const humanPlayer = game.players.find((p) => p.is_human);
 	const botPlayers = game.players.filter((p) => !p.is_human);
 	const isHumanTurn = humanPlayer && game.current_player_index === humanPlayer.player_id;
@@ -84,6 +85,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand }) =
 								onHit={onHit}
 								onStand={onStand}
 								isHumanTurn={isHumanTurn || false}
+								isActionPending={isActionPending}
 							/>
 						</div>
 					</div>

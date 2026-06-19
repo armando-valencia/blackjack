@@ -9,13 +9,21 @@ interface GameControlsProps {
 	onHit: () => void;
 	onStand: () => void;
 	isHumanTurn: boolean;
+	isActionPending: boolean;
 }
 
-const GameControls: React.FC<GameControlsProps> = ({ gameStatus, onDeal, onHit, onStand, isHumanTurn }) => {
+const GameControls: React.FC<GameControlsProps> = ({
+	gameStatus,
+	onDeal,
+	onHit,
+	onStand,
+	isHumanTurn,
+	isActionPending,
+}) => {
 	if (gameStatus === GAME_STATUS.WAITING) {
 		return (
 			<div className="flex justify-center">
-				<Button onClick={onDeal} variant={BUTTON_VARIANT.DEAL}>
+				<Button onClick={onDeal} variant={BUTTON_VARIANT.DEAL} disabled={isActionPending}>
 					Deal New Hand
 				</Button>
 			</div>
@@ -25,10 +33,10 @@ const GameControls: React.FC<GameControlsProps> = ({ gameStatus, onDeal, onHit, 
 	if (gameStatus === GAME_STATUS.PLAYING && isHumanTurn) {
 		return (
 			<div className="flex flex-col sm:flex-row justify-center gap-3">
-				<Button onClick={onHit} variant={BUTTON_VARIANT.HIT}>
+				<Button onClick={onHit} variant={BUTTON_VARIANT.HIT} disabled={isActionPending}>
 					Hit
 				</Button>
-				<Button onClick={onStand} variant={BUTTON_VARIANT.STAND}>
+				<Button onClick={onStand} variant={BUTTON_VARIANT.STAND} disabled={isActionPending}>
 					Stand
 				</Button>
 			</div>
@@ -38,7 +46,7 @@ const GameControls: React.FC<GameControlsProps> = ({ gameStatus, onDeal, onHit, 
 	if (gameStatus === GAME_STATUS.GAME_OVER) {
 		return (
 			<div className="flex justify-center">
-				<Button onClick={onDeal} variant={BUTTON_VARIANT.DEAL}>
+				<Button onClick={onDeal} variant={BUTTON_VARIANT.DEAL} disabled={isActionPending}>
 					Play Again
 				</Button>
 			</div>
