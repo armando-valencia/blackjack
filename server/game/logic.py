@@ -2,7 +2,7 @@ from game.cards import Card, Rank, create_deck
 from game.hand import calculate_hand_value
 from game.player import PlayerState, PlayerStatus
 from game.bot_player import get_random_bot_name, make_bot_decision
-from utils import GameStatus, GameResult, GameMessage, HIDDEN_CARD, PlayerAction, ServerMessageType
+from utils import GameStatus, GameResult, GameMessage, PlayerAction
 
 
 class BlackjackGame:
@@ -296,40 +296,3 @@ class BlackjackGame:
                 player.status = PlayerStatus.DONE.value
 
         self.message = GameMessage.DECK_EXHAUSTED.value
-
-    def get_game_state_for_frontend(self) -> dict:
-        """
-        Prepares the game state to be sent to the frontend.
-        Hides dealer's second card if game is still in progress.
-        """
-        # Determine if we should reveal dealer's hand
-        reveal_dealer_hand = self.game_status in [GameStatus.GAME_OVER.value, GameStatus.DEALER_TURN.value]
-
-        dealer_hand_for_frontend = []
-        if self.dealer_hand:
-            dealer_hand_for_frontend.append(str(self.dealer_hand[0]))
-            if reveal_dealer_hand:
-                for card in self.dealer_hand[1:]:
-                    dealer_hand_for_frontend.append(str(card))
-            else:
-                dealer_hand_for_frontend.append(HIDDEN_CARD)
-
-        # Calculate dealer score for frontend
-        if reveal_dealer_hand:
-            dealer_score_for_frontend = self.dealer_score
-        else:
-            dealer_score_for_frontend = calculate_hand_value([self.dealer_hand[0]]) if self.dealer_hand else 0
-
-        return {
-            "type": (
-                ServerMessageType.GAME_STATE.value
-                if self.game_status != GameStatus.GAME_OVER.value
-                else ServerMessageType.GAME_OVER.value
-            ),
-            "players": [player.to_dict() for player in self.players],
-            "dealer_hand": dealer_hand_for_frontend,
-            "dealer_score": dealer_score_for_frontend,
-            "current_player_index": self.current_player_index,
-            "game_status": self.game_status,
-            "message": self.message
-        }
