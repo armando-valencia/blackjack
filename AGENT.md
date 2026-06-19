@@ -29,9 +29,18 @@ This file is local project guidance for Codex and must remain untracked. It is n
 2. Read only the selected PR file and its listed dependencies.
 3. Confirm the working tree before editing.
 4. Create the item’s branch if it does not exist.
-5. Implement only the selected item.
-6. Validate the item and inspect the final diff.
-7. Hand off changed files, checks, known limitations, and a one-sentence suggested commit message.
+5. Track implementation progress and decisions in the selected PR file while working.
+6. Implement only the selected item.
+7. Validate the item and inspect the final diff.
+8. Hand off changed files, checks, known limitations, and a one-sentence suggested commit message.
+
+## Planning-file cleanup
+
+- Keep phase indexes focused on work that is still planned or in progress.
+- After a PR is merged, remove its planning file when no later item depends on it.
+- Remove completed entries from the phase index at the same time.
+- Do not remove planning files that still provide requirements or dependencies for active work.
+- Remove temporary tracking files once their information has been transferred to the roadmap or handoff.
 
 ## Post-merge workflow
 
