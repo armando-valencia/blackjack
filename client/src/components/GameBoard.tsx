@@ -3,6 +3,7 @@ import DealerSurface from "./DealerSurface";
 import GameMessage from "./GameMessage";
 import GameControls from "./GameControls";
 import PlayerCard from "./PlayerCard";
+import { GAME_STATUS } from "../constants";
 import type { MultiplayerGameState } from "../interfaces/game_interfaces";
 
 interface GameBoardProps {
@@ -16,7 +17,7 @@ interface GameBoardProps {
 const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand, isActionPending }) => {
 	const humanPlayer = game.players.find((p) => p.is_human);
 	const botPlayers = game.players.filter((p) => !p.is_human);
-	const isHumanTurn = humanPlayer && game.current_player_index === humanPlayer.player_id;
+	const isHumanTurn = game.game_status === GAME_STATUS.PLAYING && humanPlayer && game.current_player_index === humanPlayer.player_id;
 
 	return (
 		<div className="max-w-4xl mx-auto">
@@ -38,26 +39,26 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand, isA
 				)}
 
 				<div className="p-4 md:p-5">
-					{botPlayers.length > 0 && (
-						<div className="mb-4 space-y-2 md:space-y-0 md:grid md:grid-cols-2 md:gap-3 lg:gap-4">
-							{botPlayers.map((player) => (
-								<PlayerCard
-									key={player.player_id}
-									player={player}
-									isCurrentTurn={game.current_player_index === player.player_id}
-									variant={botPlayers.length > 2 ? "compact" : "full"}
-								/>
-							))}
-						</div>
-					)}
-
 					{humanPlayer && (
-						<div className="mb-4">
+						<div className="mb-5">
 							<PlayerCard
 								player={humanPlayer}
 								isCurrentTurn={isHumanTurn || false}
 								variant="full"
 							/>
+						</div>
+					)}
+
+					{botPlayers.length > 0 && (
+						<div className="mb-4 space-y-2" aria-label="Other players">
+							{botPlayers.map((player) => (
+								<PlayerCard
+									key={player.player_id}
+									player={player}
+									isCurrentTurn={game.game_status === GAME_STATUS.PLAYING && game.current_player_index === player.player_id}
+									variant="compact"
+								/>
+							))}
 						</div>
 					)}
 
