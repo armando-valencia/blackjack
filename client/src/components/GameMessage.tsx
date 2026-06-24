@@ -8,19 +8,23 @@ interface GameMessageProps {
 	result: GameResult | null;
 }
 
+const GAME_RESULT_MESSAGE_CLASSES: Record<GameResult, string> = {
+	[GAME_RESULT.WIN]: "text-table-active",
+	[GAME_RESULT.LOSE]: "text-table-loss",
+	[GAME_RESULT.PUSH]: "text-table-push",
+};
+
 const GameMessage: React.FC<GameMessageProps> = ({ message, gameStatus, result }) => {
-	const getMessageColor = (): string => {
+	const getMessageClass = (): string => {
 		if (gameStatus === GAME_STATUS.GAME_OVER) {
-			if (result === GAME_RESULT.WIN) return "text-emerald-400";
-			if (result === GAME_RESULT.LOSE) return "text-red-400";
-			if (result === GAME_RESULT.PUSH) return "text-blue-400";
+			if (result) return GAME_RESULT_MESSAGE_CLASSES[result];
 		}
-		return "text-slate-300";
+		return "text-table-muted";
 	};
 
 	return (
 		<div className="text-center">
-			<p className={`text-lg md:text-xl font-semibold ${getMessageColor()}`}>
+			<p className={`text-lg md:text-xl font-semibold ${getMessageClass()}`}>
 				{message}
 			</p>
 		</div>

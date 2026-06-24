@@ -20,13 +20,12 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand, isA
 
 	return (
 		<div className="max-w-4xl mx-auto">
-			<div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/30 rounded-2xl shadow-[0_20px_60px_-10px_rgba(0,0,0,0.5)] overflow-hidden">
-				{/* Dealer Section */}
-				<div className="bg-slate-800/30 border-b border-slate-700/30 p-4 md:p-5">
+			<div className="bg-table-surface/40 backdrop-blur-xl border border-table-border/30 rounded-2xl shadow-[0_20px_60px_-10px_rgba(0,0,0,0.5)] overflow-hidden">
+				<div className="bg-table-surface-raised/30 border-b border-table-border/30 p-4 md:p-5">
 					<div className="flex items-center justify-between mb-3">
-						<h3 className="text-slate-400 text-sm font-medium tracking-wider uppercase">Dealer</h3>
-						<div className="px-3 py-1 bg-slate-900/60 border border-slate-600/50 rounded-md">
-							<span className="text-white font-bold">{game.dealer_score}</span>
+						<h3 className="text-table-dealer text-sm font-medium tracking-wider uppercase">Dealer</h3>
+						<div className="bg-table-surface/60 border border-table-border/50 text-table-text px-3 py-1 rounded-md">
+							<span className="font-bold">{game.dealer_score}</span>
 						</div>
 					</div>
 					<div className="flex justify-center">
@@ -38,9 +37,8 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand, isA
 					</div>
 				</div>
 
-				{/* Message Section */}
 				{game.message && (
-					<div className="bg-slate-900/20 border-y border-slate-700/20 px-4 md:px-6 py-2.5">
+					<div className="bg-table-surface/20 border-y border-table-border/20 px-4 md:px-6 py-2.5">
 						<GameMessage
 							message={game.message}
 							gameStatus={game.game_status}
@@ -49,9 +47,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand, isA
 					</div>
 				)}
 
-				{/* Players Section */}
 				<div className="p-4 md:p-5">
-					{/* Bot Players - Compact on mobile, grid on desktop */}
 					{botPlayers.length > 0 && (
 						<div className="mb-4 space-y-2 md:space-y-0 md:grid md:grid-cols-2 md:gap-3 lg:gap-4">
 							{botPlayers.map((player) => (
@@ -65,7 +61,6 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand, isA
 						</div>
 					)}
 
-					{/* Human Player */}
 					{humanPlayer && (
 						<div className="mb-4">
 							<PlayerCard
@@ -76,7 +71,6 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand, isA
 						</div>
 					)}
 
-					{/* Game Controls */}
 					<div className="flex justify-center">
 						<div className="w-full max-w-md">
 							<GameControls
