@@ -45,7 +45,8 @@ const Card: React.FC<CardProps> = ({ card, index = 0, isDealerHoleCard = false }
 	}, [card]);
 
 	const suitColor = cardValue?.isRed ? colors.redSuit : colors.blackSuit;
-	const animationDelay = `${index * 100}ms`;
+	const animationDelay = `${Math.min(index, 4) * 80}ms`;
+	const animationStyle = { animationDelay, animationFillMode: "both" };
 
 	return card === HIDDEN_CARD ? (
 		<div
@@ -60,7 +61,7 @@ const Card: React.FC<CardProps> = ({ card, index = 0, isDealerHoleCard = false }
 				relative
 				overflow-hidden
 			`}
-			style={{ animationDelay }}
+			style={animationStyle}
 		>
 			<div className="absolute inset-0 rounded-lg bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,rgba(255,255,255,0.03)_10px,rgba(255,255,255,0.03)_20px)]" />
 			<div className="absolute inset-[2px] rounded-lg bg-gradient-to-br from-slate-700/50 to-slate-900/50" />
@@ -79,7 +80,7 @@ const Card: React.FC<CardProps> = ({ card, index = 0, isDealerHoleCard = false }
 				relative
 				overflow-hidden
 			`}
-			style={{ animationDelay }}
+			style={animationStyle}
 		>
 			<div className="absolute inset-0 rounded-lg bg-gradient-to-br from-white/40 to-transparent pointer-events-none" />
 

@@ -53,6 +53,13 @@ const PLAYER_TURN_CLASSES = {
 	bot: "border-table-active-bot/50 shadow-[0_0_15px_rgba(59,130,246,0.2)]",
 	complete: "opacity-70",
 };
+const PLAYER_STATUS_FRAME_CLASSES: Record<PlayerStatus, string> = {
+	[PLAYER_STATUS.WAITING]: "animate-[statusChange_0.25s_ease-out]",
+	[PLAYER_STATUS.PLAYING]: "animate-[statusChange_0.25s_ease-out]",
+	[PLAYER_STATUS.STANDING]: "animate-[statusChange_0.25s_ease-out]",
+	[PLAYER_STATUS.BUST]: "border-table-loss/70 shadow-[0_0_16px_rgba(248,113,113,0.25)] animate-[bustPulse_0.45s_ease-out]",
+	[PLAYER_STATUS.DONE]: "",
+};
 
 const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant = "full" }) => {
 	const getStatusClass = () => {
@@ -72,7 +79,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant 
 		if (isCurrentTurn && player.is_human) return PLAYER_TURN_CLASSES.human;
 		if (isCurrentTurn) return PLAYER_TURN_CLASSES.bot;
 		if (player.status === PLAYER_STATUS.DONE) return PLAYER_TURN_CLASSES.complete;
-		return "";
+		return PLAYER_STATUS_FRAME_CLASSES[player.status];
 	};
 
 	const nameClass = player.is_human ? "text-table-active" : "text-table-dealer";
@@ -143,7 +150,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant 
 
 			{player.status === PLAYER_STATUS.DONE && player.result && (
 				<div className="mt-4 flex justify-center">
-					<div className={`px-6 py-2 rounded-lg font-bold text-lg border-2 ${PLAYER_RESULT_BADGE_CLASSES[player.result]}`}>
+					<div className={`px-6 py-2 rounded-lg font-bold text-lg border-2 animate-[resultReveal_0.35s_ease-out] ${PLAYER_RESULT_BADGE_CLASSES[player.result]}`}>
 						{player.is_human ? PLAYER_RESULT_LABELS[player.result] : resultLabel}
 					</div>
 				</div>
