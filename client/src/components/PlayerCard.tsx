@@ -141,7 +141,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant 
 			</div>
 
 			<div className="flex justify-center">
-				<div className="flex gap-2 md:gap-3 flex-wrap justify-center">
+				<div className="flex w-full max-w-full gap-1.5 sm:gap-2 md:gap-3 flex-wrap justify-center">
 					{player.hand.map((cardString, index) => (
 						<Card key={`${player.player_id}-${cardString}-${index}`} card={cardString} index={index} />
 					))}
