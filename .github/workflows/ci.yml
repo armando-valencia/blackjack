@@ -1,10 +1,6 @@
 name: Build and quality
 
 on:
-  push:
-    paths-ignore:
-      - "**.md"
-      - ".agents/**"
   pull_request:
     paths-ignore:
       - "**.md"
