@@ -11,15 +11,16 @@ interface CardProps {
 interface CardValue {
 	rank: number | string;
 	suit: string;
+	suitName: string;
 	suitSymbol: string;
 	isRed: boolean;
 }
 
-const suitMapper: { [key: string]: { symbol: string; isRed: boolean } } = {
-	[CARD_SUITS.HEARTS]: { symbol: "♥", isRed: true },
-	[CARD_SUITS.DIAMONDS]: { symbol: "♦", isRed: true },
-	[CARD_SUITS.CLUBS]: { symbol: "♣", isRed: false },
-	[CARD_SUITS.SPADES]: { symbol: "♠", isRed: false },
+const suitMapper: { [key: string]: { name: string; symbol: string; isRed: boolean } } = {
+	[CARD_SUITS.HEARTS]: { name: "hearts", symbol: "♥", isRed: true },
+	[CARD_SUITS.DIAMONDS]: { name: "diamonds", symbol: "♦", isRed: true },
+	[CARD_SUITS.CLUBS]: { name: "clubs", symbol: "♣", isRed: false },
+	[CARD_SUITS.SPADES]: { name: "spades", symbol: "♠", isRed: false },
 };
 
 const getCardValue = (card: string): CardValue => {
@@ -30,8 +31,9 @@ const getCardValue = (card: string): CardValue => {
 	const suitInfo = suitMapper[suitKey];
 
 	return {
-		rank: rank,
+		 rank: rank,
 		suit: suitKey,
+		suitName: suitInfo.name,
 		suitSymbol: suitInfo.symbol,
 		isRed: suitInfo.isRed,
 	};
@@ -50,6 +52,8 @@ const Card: React.FC<CardProps> = ({ card, index = 0, isDealerHoleCard = false }
 
 	return card === HIDDEN_CARD ? (
 		<div
+			role="img"
+			aria-label={isDealerHoleCard ? "Dealer hole card hidden" : "Hidden card"}
 			className={`
 				shrink-0 w-[clamp(4rem,18vw,5rem)] h-[clamp(6rem,27vw,7rem)] md:w-28 md:h-40
 				rounded-lg
@@ -68,6 +72,8 @@ const Card: React.FC<CardProps> = ({ card, index = 0, isDealerHoleCard = false }
 		</div>
 	) : (
 		<div
+			role="img"
+			aria-label={`${cardValue?.rank} of ${cardValue?.suitName}`}
 			className={`
 				shrink-0 w-[clamp(4rem,18vw,5rem)] h-[clamp(6rem,27vw,7rem)] md:w-28 md:h-40
 				rounded-lg
