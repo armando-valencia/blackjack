@@ -58,14 +58,14 @@ const RulesPanel: React.FC<RulesPanelProps> = ({ stats, onResetStats }) => {
 									Reset
 								</button>
 							</div>
-							<div className="grid grid-cols-2 gap-2">
+							<dl className="grid grid-cols-2 gap-2">
 								{STAT_ITEMS.map(([label, key]) => (
 									<div key={label} className="bg-table-surface/60 border border-table-border/30 rounded-lg p-3">
-										<p className="text-table-subtle text-xs uppercase tracking-wider">{label}</p>
-										<p className="text-table-text text-xl font-semibold mt-1">{stats[key]}</p>
+										<dt className="text-table-subtle text-xs uppercase tracking-wider">{label}</dt>
+										<dd className="text-table-text text-xl font-semibold mt-1">{stats[key]}</dd>
 									</div>
 								))}
-							</div>
+							</dl>
 							<p className="text-table-subtle text-xs mt-3">Session totals are stored only in this page and reset when you choose Reset or reload.</p>
 						</div>
 					</div>

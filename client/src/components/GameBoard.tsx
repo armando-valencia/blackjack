@@ -20,7 +20,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand, isA
 	const isHumanTurn = game.game_status === GAME_STATUS.PLAYING && humanPlayer && game.current_player_index === humanPlayer.player_id;
 
 	return (
-		<div className="w-full max-w-4xl min-w-0 mx-auto">
+		<section aria-label="Game table" className="w-full max-w-4xl min-w-0 mx-auto">
 			<div className="w-full min-w-0 bg-table-surface/40 backdrop-blur-xl border border-table-border/30 rounded-2xl shadow-[0_20px_60px_-10px_rgba(0,0,0,0.5)] overflow-hidden">
 				<DealerSurface
 					dealerHand={game.dealer_hand}
@@ -50,18 +50,20 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand, isA
 					)}
 
 					{botPlayers.length > 0 && (
-						<div className="mb-4 space-y-2" aria-label="Other players">
+						<ul className="mb-4 space-y-2" aria-label="Other players">
 							{botPlayers.map((player) => (
-								<PlayerCard
-									key={player.player_id}
-									player={player}
-									isCurrentTurn={game.game_status === GAME_STATUS.PLAYING && game.current_player_index === player.player_id}
-									variant="compact"
-								/>
+								<li key={player.player_id}>
+									<PlayerCard
+										player={player}
+										isCurrentTurn={game.game_status === GAME_STATUS.PLAYING && game.current_player_index === player.player_id}
+										variant="compact"
+									/>
+								</li>
 							))}
-						</div>
+						</ul>
 					)}
 
+				</div>
 			</div>
 
 			<ActionRail
@@ -76,8 +78,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand, isA
 				isHumanTurn={isHumanTurn || false}
 				isActionPending={isActionPending}
 			/>
-		</div>
-		</div>
+		</section>
 	);
 };
 
