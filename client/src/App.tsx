@@ -34,6 +34,8 @@ function App() {
 					<GameBoard
 						game={game}
 						onDeal={() => sendControlMessage(CONTROL_MESSAGE_TYPE.DEAL_INITIAL)}
+						onRestart={() => sendControlMessage(CONTROL_MESSAGE_TYPE.RESTART_HAND)}
+						onReturnToMenu={() => sendControlMessage(CONTROL_MESSAGE_TYPE.RETURN_TO_MENU)}
 						onHit={() => sendControlMessage(CONTROL_MESSAGE_TYPE.HIT)}
 						onStand={() => sendControlMessage(CONTROL_MESSAGE_TYPE.STAND)}
 						isActionPending={isActionPending}

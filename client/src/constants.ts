@@ -31,6 +31,8 @@ export const SERVER_MESSAGE_TYPE = {
 export const CONTROL_MESSAGE_TYPE = {
 	SET_PLAYER_COUNT: "set_player_count",
 	DEAL_INITIAL: "deal_initial",
+	RESTART_HAND: "restart_hand",
+	RETURN_TO_MENU: "return_to_menu",
 	HIT: "hit",
 	STAND: "stand",
 } as const;

@@ -1,5 +1,6 @@
 import React from "react";
 import DealerSurface from "./DealerSurface";
+import GameNavigation from "./GameNavigation";
 import GameMessage from "./GameMessage";
 import ActionRail from "./ActionRail";
 import PlayerCard from "./PlayerCard";
@@ -9,12 +10,14 @@ import type { MultiplayerGameState } from "../interfaces/game_interfaces";
 interface GameBoardProps {
 	game: MultiplayerGameState;
 	onDeal: () => void;
+	onRestart: () => void;
+	onReturnToMenu: () => void;
 	onHit: () => void;
 	onStand: () => void;
 	isActionPending: boolean;
 }
 
-const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand, isActionPending }) => {
+const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onRestart, onReturnToMenu, onHit, onStand, isActionPending }) => {
 	const humanPlayer = game.players.find((p) => p.is_human);
 	const botPlayers = game.players.filter((p) => !p.is_human);
 	const isHumanTurn = game.game_status === GAME_STATUS.PLAYING && humanPlayer && game.current_player_index === humanPlayer.player_id;
@@ -22,6 +25,11 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand, isA
 	return (
 		<section aria-label="Game table" className="mx-auto w-full max-w-4xl min-w-0">
 			<div className="w-full min-w-0 overflow-hidden rounded-xl border-2 border-table-border/70 bg-table-surface shadow-lg">
+				<GameNavigation
+					onRestart={onRestart}
+					onReturnToMenu={onReturnToMenu}
+					isActionPending={isActionPending}
+				/>
 				<DealerSurface
 					dealerHand={game.dealer_hand}
 					dealerScore={game.dealer_score}
