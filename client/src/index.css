@@ -25,7 +25,7 @@
 		background-color: var(--color-table-page-start);
 		color: var(--color-table-text);
 		font-family: ui-sans-serif, system-ui, sans-serif;
-		overflow-x: hidden;
+		overflow: hidden;
 	}
 
 	button:focus-visible,

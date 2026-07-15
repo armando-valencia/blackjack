@@ -36,9 +36,9 @@ const DealerSurface: React.FC<DealerSurfaceProps> = ({ dealerHand, dealerScore, 
 	return (
 		<section
 			aria-labelledby="dealer-surface-title"
-			className="border-b border-table-border/40 bg-table-surface-raised/25 p-3 sm:p-4 md:p-5"
+			className="shrink-0 border-b border-table-border/40 bg-table-surface-raised/25 p-2 sm:p-3 md:p-4"
 		>
-			<div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+			<div className="mb-2 flex flex-wrap items-center justify-between gap-2 sm:mb-3">
 				<div>
 					<p className="text-table-subtle text-xs font-medium uppercase tracking-wider">House</p>
 					<h2 id="dealer-surface-title" className="font-serif text-xl font-semibold text-table-text md:text-2xl">
@@ -56,7 +56,7 @@ const DealerSurface: React.FC<DealerSurfaceProps> = ({ dealerHand, dealerScore, 
 				</div>
 			</div>
 
-			<div className="border-y border-table-border/20 bg-table-page-start/15 px-2 py-3 sm:px-4 sm:py-4">
+			<div className="border-y border-table-border/20 bg-table-page-start/15 px-2 py-2 sm:px-4 sm:py-3">
 				<div className="flex w-full max-w-full flex-wrap justify-center gap-1.5 sm:gap-2 md:gap-3">
 					{dealerHand.map((cardString, index) => (
 						<Card
@@ -69,7 +69,7 @@ const DealerSurface: React.FC<DealerSurfaceProps> = ({ dealerHand, dealerScore, 
 				</div>
 			</div>
 
-			<p className={`mt-3 text-center text-sm ${DEALER_PHASE_CLASSES[gameStatus]}`} role="status" aria-live={isDealerTurn ? "polite" : "off"}>
+			<p className={`mt-2 text-center text-xs sm:text-sm ${DEALER_PHASE_CLASSES[gameStatus]}`} role="status" aria-live={isDealerTurn ? "polite" : "off"}>
 				{DEALER_PHASE_MESSAGES[gameStatus]}
 			</p>
 		</section>

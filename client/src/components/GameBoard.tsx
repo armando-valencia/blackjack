@@ -23,8 +23,8 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onRestart, onReturn
 	const isHumanTurn = game.game_status === GAME_STATUS.PLAYING && humanPlayer && game.current_player_index === humanPlayer.player_id;
 
 	return (
-		<section aria-label="Game table" className="mx-auto w-full max-w-4xl min-w-0">
-			<div className="w-full min-w-0 overflow-hidden rounded-xl border-2 border-table-border/70 bg-table-surface shadow-lg">
+		<section aria-label="Game table" className="mx-auto h-full w-full min-w-0">
+			<div className="flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden rounded-xl border-2 border-table-border/70 bg-table-surface shadow-lg">
 				<GameNavigation
 					onRestart={onRestart}
 					onReturnToMenu={onReturnToMenu}
@@ -46,9 +46,9 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onRestart, onReturn
 					</div>
 				)}
 
-				<div className="p-3 sm:p-4 md:p-5">
+				<div className="grid min-h-0 flex-1 grid-cols-1 gap-2 overflow-hidden p-2 sm:gap-3 sm:p-3 md:grid-cols-[minmax(0,1.6fr)_minmax(12rem,0.9fr)] md:p-4">
 					{humanPlayer && (
-						<div className="mb-4">
+						<div className="min-h-0">
 							<PlayerCard
 								player={humanPlayer}
 								isCurrentTurn={isHumanTurn || false}
@@ -58,7 +58,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onRestart, onReturn
 					)}
 
 					{botPlayers.length > 0 && (
-						<ul className="mb-3 space-y-1.5" aria-label="Other players">
+						<ul className="grid min-h-0 grid-cols-2 content-start gap-2 overflow-hidden md:grid-cols-1" aria-label="Other players">
 							{botPlayers.map((player) => (
 								<li key={player.player_id}>
 									<PlayerCard
