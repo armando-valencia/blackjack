@@ -21,6 +21,8 @@ class PlayerAction(enum.Enum):
 class ControlMessageType(enum.Enum):
     SET_PLAYER_COUNT = "set_player_count"
     DEAL_INITIAL = "deal_initial"
+    RESTART_HAND = "restart_hand"
+    RETURN_TO_MENU = "return_to_menu"
     HIT = PlayerAction.HIT.value
     STAND = PlayerAction.STAND.value
 
