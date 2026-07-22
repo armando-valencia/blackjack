@@ -17,20 +17,15 @@ function App() {
 	const showGameBoard = game && game.players.length > 0;
 
 	return (
-		<div className="flex flex-col items-center justify-start lg:justify-center min-h-dvh w-full overflow-x-hidden bg-gradient-to-br from-table-page-start via-table-page-middle to-table-page-start p-4 py-6 md:p-8 relative">
-			<div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--color-table-glow)_0%,transparent_50%)]" />
-			<div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(15,23,42,0.3),transparent_50%)]" />
-			<div aria-hidden="true" className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-700/50 to-transparent" />
-
+		<div className="flex min-h-dvh w-full items-start justify-center overflow-x-hidden bg-table-page-start px-3 py-4 sm:px-6 sm:py-6">
 			<ConnectionStatus status={connectionStatus} hasError={!!errorMessage} />
 			<ErrorToast message={errorMessage} />
 
-			<main className="w-full max-w-6xl min-w-0 relative z-10">
-				<header className="text-center mb-6 md:mb-8">
-					<h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-[0.15em] sm:tracking-[0.3em] mb-2">
+			<main className="relative z-10 w-full max-w-5xl min-w-0">
+				<header className="mb-4 border-b border-table-border/50 pb-3 text-center sm:mb-6">
+					<h1 className="font-serif text-3xl font-semibold tracking-[0.08em] text-table-text sm:text-4xl">
 						BLACKJACK
 					</h1>
-					<div aria-hidden="true" className="h-px w-32 mx-auto bg-gradient-to-r from-transparent via-slate-600 to-transparent" />
 				</header>
 
 				{showPlayerSelect && <PlayerSelect onSelectPlayerCount={handlePlayerCountSelect} />}
@@ -47,7 +42,7 @@ function App() {
 
 				{!game && (
 					<div className="flex justify-center" role="status" aria-live="polite">
-						<div className="bg-table-surface/60 backdrop-blur-2xl border border-table-border/30 px-8 py-4 rounded-xl">
+						<div className="rounded-md border border-table-border/60 bg-table-surface px-5 py-3 shadow-sm">
 							<p className="text-table-muted text-base">Connecting to server...</p>
 						</div>
 					</div>

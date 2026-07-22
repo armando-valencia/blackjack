@@ -1,29 +1,28 @@
 @import "tailwindcss";
 
 @theme {
-	--color-table-page-start: #0a0e17;
-	--color-table-page-middle: #121621;
-	--color-table-glow: #1e3a8a;
-	--color-table-surface: #0f172a;
-	--color-table-surface-raised: #1e293b;
-	--color-table-border: #475569;
-	--color-table-text: #f8fafc;
-	--color-table-muted: #94a3b8;
-	--color-table-subtle: #64748b;
-	--color-table-focus: #fbbf24;
-	--color-table-dealer: #cbd5e1;
-	--color-table-active: #34d399;
-	--color-table-active-bot: #60a5fa;
-	--color-table-loss: #f87171;
-	--color-table-push: #60a5fa;
-	--color-card-suit-red: #dc2626;
+	--color-table-page-start: #102c22;
+	--color-table-page-middle: #1a4936;
+	--color-table-surface: #174331;
+	--color-table-surface-raised: #20553f;
+	--color-table-border: #b6924e;
+	--color-table-text: #fff9e8;
+	--color-table-muted: #d6d0bd;
+	--color-table-subtle: #a7a18f;
+	--color-table-focus: #f4c95d;
+	--color-table-dealer: #f3e6bd;
+	--color-table-active: #f0c75e;
+	--color-table-active-bot: #b7d7c6;
+	--color-table-loss: #d7654f;
+	--color-table-push: #b7d7c6;
+	--color-card-suit-red: #b42318;
 	--color-card-suit-black: #1f2937;
 }
 
 @layer base {
 	body {
 		margin: 0;
-		background: var(--color-table-page-start);
+		background-color: var(--color-table-page-start);
 		color: var(--color-table-text);
 		font-family: ui-sans-serif, system-ui, sans-serif;
 		overflow-x: hidden;
@@ -91,12 +90,6 @@
 		}
 	}
 
-	.glass {
-		background: rgba(255, 255, 255, 0.05);
-		backdrop-filter: blur(16px);
-		-webkit-backdrop-filter: blur(16px);
-		border: 1px solid rgba(255, 255, 255, 0.1);
-	}
 }
 
 @media (prefers-reduced-motion: reduce) {
