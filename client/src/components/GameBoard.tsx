@@ -20,8 +20,8 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand, isA
 	const isHumanTurn = game.game_status === GAME_STATUS.PLAYING && humanPlayer && game.current_player_index === humanPlayer.player_id;
 
 	return (
-		<section aria-label="Game table" className="w-full max-w-4xl min-w-0 mx-auto">
-			<div className="w-full min-w-0 bg-table-surface/40 backdrop-blur-xl border border-table-border/30 rounded-2xl shadow-[0_20px_60px_-10px_rgba(0,0,0,0.5)] overflow-hidden">
+		<section aria-label="Game table" className="mx-auto w-full max-w-4xl min-w-0">
+			<div className="w-full min-w-0 overflow-hidden rounded-xl border-2 border-table-border/70 bg-table-surface shadow-lg">
 				<DealerSurface
 					dealerHand={game.dealer_hand}
 					dealerScore={game.dealer_score}
@@ -29,7 +29,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand, isA
 				/>
 
 				{game.message && (
-					<div className="bg-table-surface/20 border-y border-table-border/20 px-4 md:px-6 py-2.5">
+					<div className="border-y border-table-border/30 bg-table-page-start/20 px-3 py-2 sm:px-5">
 						<GameMessage
 							message={game.message}
 							gameStatus={game.game_status}
@@ -38,9 +38,9 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand, isA
 					</div>
 				)}
 
-				<div className="p-4 md:p-5">
+				<div className="p-3 sm:p-4 md:p-5">
 					{humanPlayer && (
-						<div className="mb-5">
+						<div className="mb-4">
 							<PlayerCard
 								player={humanPlayer}
 								isCurrentTurn={isHumanTurn || false}
@@ -50,7 +50,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand, isA
 					)}
 
 					{botPlayers.length > 0 && (
-						<ul className="mb-4 space-y-2" aria-label="Other players">
+						<ul className="mb-3 space-y-1.5" aria-label="Other players">
 							{botPlayers.map((player) => (
 								<li key={player.player_id}>
 									<PlayerCard

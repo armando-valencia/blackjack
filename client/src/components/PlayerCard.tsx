@@ -10,7 +10,7 @@ interface PlayerCardProps {
 }
 
 const PLAYER_BASE_CLASSES =
-	"min-w-0 bg-table-surface-raised/30 backdrop-blur-sm border-2 border-table-border/30 rounded-xl transition-all duration-300";
+	"min-w-0 rounded-lg border border-table-border/45 bg-table-surface-raised/20 transition-colors duration-200";
 const PLAYER_STATUS_CLASSES: Record<PlayerStatus, string> = {
 	[PLAYER_STATUS.WAITING]: "text-table-muted",
 	[PLAYER_STATUS.PLAYING]: "text-table-muted",
@@ -49,8 +49,8 @@ const PLAYER_STATUS_LABELS: Partial<Record<PlayerStatus, string>> = {
 	[PLAYER_STATUS.WAITING]: "WAITING",
 };
 const PLAYER_TURN_CLASSES = {
-	human: "border-table-active/70 shadow-[0_0_20px_rgba(16,185,129,0.3)]",
-	bot: "border-table-active-bot/50 shadow-[0_0_15px_rgba(59,130,246,0.2)]",
+	human: "border-table-active/80",
+	bot: "border-table-active-bot/70",
 	complete: "opacity-70",
 };
 const PLAYER_STATUS_FRAME_CLASSES: Record<PlayerStatus, string> = {
@@ -110,7 +110,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant 
 					</div>
 					<div className="flex flex-wrap items-center justify-end gap-2">
 						<span className="text-table-muted text-sm">{player.hand.length} cards</span>
-						<dl className="bg-table-surface/60 border border-table-border/50 rounded px-2 py-1">
+				<dl className="rounded border border-table-border/50 bg-table-surface px-2 py-1">
 							<dt className="sr-only">Score</dt>
 							<dd className="text-table-text font-bold text-sm">{player.score}</dd>
 						</dl>
@@ -138,7 +138,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant 
 						</span>
 					)}
 				</div>
-				<dl className={`shrink-0 bg-table-surface/60 border border-table-border/50 px-3 py-1 rounded-md ${player.is_human ? "bg-table-active/10 border-table-active/30" : ""}`}>
+				<dl className={`shrink-0 rounded-md border border-table-border/50 bg-table-surface px-3 py-1 ${player.is_human ? "border-table-active/50 bg-table-active/10" : ""}`}>
 					<dt className="sr-only">Score</dt>
 					<dd className={`${scoreClass} font-bold`}>{player.score}</dd>
 				</dl>
