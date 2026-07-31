@@ -76,27 +76,27 @@ const ActionRail: React.FC<ActionRailProps> = ({
 	};
 
 	return (
-		<section aria-label="Round actions" className="sticky bottom-0 z-30 bg-table-surface-raised/90 backdrop-blur-xl border border-table-border/30 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] md:p-5 md:pb-5">
-			<div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+		<section aria-label="Round actions" className="sticky bottom-0 z-30 border-t border-table-border/50 bg-table-surface-raised/80 px-3 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:static md:px-5 md:py-4 md:pb-4">
+			<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 				<div>
-					<p className="text-table-subtle text-xs font-medium tracking-[0.2em] uppercase">Round actions</p>
-					<p className="text-table-muted text-sm mt-1" aria-live="polite">{getActionMessage()}</p>
+					<p className="text-table-text text-sm font-semibold">Your move</p>
+					<p className="mt-0.5 text-xs text-table-muted" aria-live="polite">{getActionMessage()}</p>
 				</div>
-				<div className="flex justify-center lg:justify-end">{renderAction()}</div>
+				<div className="flex justify-center sm:justify-end">{renderAction()}</div>
 			</div>
 
 			{gameStatus === GAME_STATUS.GAME_OVER && (
-				<dl className="mt-4 grid grid-cols-3 gap-2 border-t border-table-border/20 pt-4 text-center">
+				<dl className="mt-3 grid grid-cols-3 gap-2 border-t border-table-border/30 pt-3 text-center">
 					<div>
-						<dt className="text-table-subtle text-xs uppercase tracking-wider">Dealer</dt>
+						<dt className="text-table-subtle text-[0.65rem] uppercase tracking-wide">Dealer</dt>
 						<dd className="text-table-text font-semibold">{dealerScore}</dd>
 					</div>
 					<div>
-						<dt className="text-table-subtle text-xs uppercase tracking-wider">You</dt>
+						<dt className="text-table-subtle text-[0.65rem] uppercase tracking-wide">You</dt>
 						<dd className="text-table-text font-semibold">{playerScore ?? "—"}</dd>
 					</div>
 					<div>
-						<dt className="text-table-subtle text-xs uppercase tracking-wider">Result</dt>
+						<dt className="text-table-subtle text-[0.65rem] uppercase tracking-wide">Result</dt>
 						<dd className="text-table-active font-semibold">{playerResult ? RESULT_LABELS[playerResult] : "Round over"}</dd>
 					</div>
 				</dl>

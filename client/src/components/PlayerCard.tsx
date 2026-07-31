@@ -23,19 +23,9 @@ const PLAYER_RESULT_CLASSES: Record<GameResult, string> = {
 	[GAME_RESULT.LOSE]: "text-table-loss",
 	[GAME_RESULT.PUSH]: "text-table-push",
 };
-const PLAYER_RESULT_BADGE_CLASSES: Record<GameResult, string> = {
-	[GAME_RESULT.WIN]: "bg-table-active/20 border-table-active text-table-active",
-	[GAME_RESULT.LOSE]: "bg-table-loss/20 border-table-loss text-table-loss",
-	[GAME_RESULT.PUSH]: "bg-table-push/20 border-table-push text-table-push",
-};
 const PLAYER_RESULT_STATUS_LABELS: Record<GameResult, string> = {
 	[GAME_RESULT.WIN]: "WON",
 	[GAME_RESULT.LOSE]: "LOST",
-	[GAME_RESULT.PUSH]: "PUSH",
-};
-const PLAYER_RESULT_LABELS: Record<GameResult, string> = {
-	[GAME_RESULT.WIN]: "YOU WIN!",
-	[GAME_RESULT.LOSE]: "YOU LOSE",
 	[GAME_RESULT.PUSH]: "PUSH",
 };
 const PLAYER_RESULT_SUMMARY_LABELS: Record<GameResult, { human: string; bot: string }> = {
@@ -154,13 +144,6 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant 
 				</ul>
 			</div>
 
-			{player.status === PLAYER_STATUS.DONE && player.result && (
-				<div className="mt-4 flex justify-center">
-					<p className={`px-6 py-2 rounded-lg font-bold text-lg border-2 animate-[resultReveal_0.35s_ease-out] ${PLAYER_RESULT_BADGE_CLASSES[player.result]}`}>
-						{player.is_human ? PLAYER_RESULT_LABELS[player.result] : resultLabel}
-					</p>
-				</div>
-			)}
 		</article>
 	);
 };

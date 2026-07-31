@@ -61,10 +61,9 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand, isA
 								</li>
 							))}
 						</ul>
-					)}
+						)}
 
 				</div>
-			</div>
 
 			<ActionRail
 				gameStatus={game.game_status}
@@ -78,6 +77,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand, isA
 				isHumanTurn={isHumanTurn || false}
 				isActionPending={isActionPending}
 			/>
+			</div>
 		</section>
 	);
 };

@@ -11,25 +11,21 @@ interface ButtonProps {
 }
 
 const BUTTON_BASE_CLASSES = `
-	px-8 py-3 md:px-10 md:py-4
-	rounded-lg
-	font-semibold text-base md:text-lg
+	px-5 py-2.5 md:px-7 md:py-3
+	rounded-md
+	font-semibold text-sm md:text-base
 	text-table-text
-	shadow-[0_4px_14px_0_rgba(0,0,0,0.4)]
-	border border-black/20
-	transform active:scale-95
-	transition-all duration-200
-	hover:shadow-[0_6px_20px_0_rgba(0,0,0,0.5)]
-	hover:-translate-y-0.5
+	border border-table-border/40
+	transition-colors duration-200
 	relative
-	min-h-12 w-full sm:w-auto touch-manipulation select-none
-	min-w-[140px] md:min-w-[160px]
-	disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
+	min-h-11 w-full sm:w-auto touch-manipulation select-none
+	min-w-[124px] md:min-w-[140px]
+	disabled:opacity-50 disabled:cursor-not-allowed
 `;
 const BUTTON_VARIANT_CLASSES = {
-	[BUTTON_VARIANT.DEAL]: "bg-gradient-to-b from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600",
-	[BUTTON_VARIANT.HIT]: "bg-gradient-to-b from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600",
-	[BUTTON_VARIANT.STAND]: "bg-gradient-to-b from-slate-600 to-slate-700 hover:from-slate-500 hover:to-slate-600",
+	[BUTTON_VARIANT.DEAL]: "bg-table-active text-table-page-start hover:bg-[#f6d676]",
+	[BUTTON_VARIANT.HIT]: "bg-table-active-bot text-table-page-start hover:bg-[#cde5d7]",
+	[BUTTON_VARIANT.STAND]: "bg-table-surface-raised text-table-text hover:bg-table-surface",
 };
 
 const Button: React.FC<ButtonProps> = ({
