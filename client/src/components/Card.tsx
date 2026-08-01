@@ -87,8 +87,6 @@ const Card: React.FC<CardProps> = ({ card, index = 0, isDealerHoleCard = false }
 			`}
 			style={animationStyle}
 		>
-			<div className="absolute inset-0 rounded-lg bg-gradient-to-br from-white/40 to-transparent pointer-events-none" />
-
 			<div className="flex justify-start p-1 md:p-1.5 z-10">
 				<div className="flex flex-col items-center leading-none gap-0">
 					<span className="text-xs sm:text-sm md:text-lg font-bold" style={{ color: suitColor }}>

@@ -47,7 +47,7 @@ const PLAYER_STATUS_FRAME_CLASSES: Record<PlayerStatus, string> = {
 	[PLAYER_STATUS.WAITING]: "animate-[statusChange_0.25s_ease-out]",
 	[PLAYER_STATUS.PLAYING]: "animate-[statusChange_0.25s_ease-out]",
 	[PLAYER_STATUS.STANDING]: "animate-[statusChange_0.25s_ease-out]",
-	[PLAYER_STATUS.BUST]: "border-table-loss/70 shadow-[0_0_16px_rgba(248,113,113,0.25)] animate-[bustPulse_0.45s_ease-out]",
+	[PLAYER_STATUS.BUST]: "border-table-loss/70",
 	[PLAYER_STATUS.DONE]: "",
 };
 

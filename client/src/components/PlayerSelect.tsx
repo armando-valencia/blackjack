@@ -24,13 +24,12 @@ const PlayerSelect: React.FC<PlayerSelectProps> = ({ onSelectPlayerCount }) => {
 							<button
 								type="button"
 								onClick={() => onSelectPlayerCount(count)}
-								className="group relative w-full rounded-md border border-table-border/60 bg-table-surface-raised/60 p-4 transition-colors duration-200 hover:border-table-active hover:bg-table-surface-raised sm:p-5"
+								className="w-full rounded-md border border-table-border/60 bg-table-surface-raised/60 p-4 transition-colors duration-200 hover:border-table-active hover:bg-table-surface-raised sm:p-5"
 							>
 								<span className="block text-center">
 									<span className="block text-xl sm:text-3xl font-bold text-white mb-1">{label}</span>
 									<span className="block text-table-muted text-xs">{description}</span>
 								</span>
-								<span aria-hidden="true" className="absolute inset-0 rounded-xl bg-emerald-500/0 group-hover:bg-emerald-500/10 transition-colors duration-200" />
 							</button>
 						</li>
 					))}

@@ -10,27 +10,27 @@ interface ConnectionStatusProps {
 const ConnectionStatus: React.FC<ConnectionStatusProps> = ({ status, hasError }) => {
 	const statusConfig = {
 	[CONNECTION_STATUS.CONNECTING]: {
-			color: "bg-yellow-400",
+				color: "bg-table-focus",
 			text: "Connecting...",
 			pulse: true,
 	},
 	[CONNECTION_STATUS.RECONNECTING]: {
-		color: "bg-yellow-400",
+		color: "bg-table-focus",
 		text: "Reconnecting...",
 		pulse: true,
 	},
 	[CONNECTION_STATUS.CONNECTED]: {
-			color: "bg-emerald-400",
+			color: "bg-table-active",
 			text: "Connected",
 			pulse: false,
 		},
 	[CONNECTION_STATUS.DISCONNECTED]: {
-			color: "bg-red-400",
+			color: "bg-table-loss",
 			text: "Disconnected",
 			pulse: true,
 		},
 	[CONNECTION_STATUS.ERROR]: {
-			color: "bg-red-400",
+		color: "bg-table-loss",
 			text: "Disconnected",
 			pulse: true,
 		},
