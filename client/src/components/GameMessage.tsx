@@ -8,14 +8,18 @@ interface GameMessageProps {
 	result: GameResult | null;
 }
 
+const GAME_RESULT_MESSAGE_CLASSES: Record<GameResult, string> = {
+	[GAME_RESULT.WIN]: "text-table-active",
+	[GAME_RESULT.LOSE]: "text-table-loss",
+	[GAME_RESULT.PUSH]: "text-table-push",
+};
+
 const GameMessage: React.FC<GameMessageProps> = ({ message, gameStatus, result }) => {
 	const getMessageClass = (): string => {
 		if (gameStatus === GAME_STATUS.GAME_OVER) {
-			if (result === GAME_RESULT.WIN) return "table-status--win";
-			if (result === GAME_RESULT.LOSE) return "table-status--loss";
-			if (result === GAME_RESULT.PUSH) return "table-status--push";
+			if (result) return GAME_RESULT_MESSAGE_CLASSES[result];
 		}
-		return "table-message--default";
+		return "text-table-muted";
 	};
 
 	return (

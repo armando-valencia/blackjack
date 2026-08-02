@@ -14,20 +14,20 @@ const PlayerSelect: React.FC<PlayerSelectProps> = ({ onSelectPlayerCount }) => {
 
 	return (
 		<div className="flex justify-center">
-			<div className="table-select px-8 py-10 rounded-2xl max-w-xl w-full">
+			<div className="bg-table-surface/60 backdrop-blur-2xl border border-table-border/30 px-8 py-10 rounded-2xl max-w-xl w-full">
 				<h2 className="text-white text-2xl font-bold text-center mb-2">Choose Players</h2>
-				<p className="table-player__meta text-center mb-8 text-sm">Select how many players vs the Dealer</p>
+				<p className="text-table-muted text-center mb-8 text-sm">Select how many players vs the Dealer</p>
 
 				<div className="grid grid-cols-2 gap-4">
 					{playerOptions.map(({ count, label, description }) => (
 						<button
 							key={count}
 							onClick={() => onSelectPlayerCount(count)}
-							className="table-select-option group relative rounded-xl p-6"
+							className="group relative bg-table-surface-raised/50 hover:bg-slate-700/50 border-2 border-table-border/50 hover:border-emerald-500/50 rounded-xl p-6 transition-all duration-200 hover:scale-105"
 						>
 							<div className="text-center">
 								<div className="text-3xl font-bold text-white mb-1">{label}</div>
-								<div className="table-player__meta text-xs">{description}</div>
+								<div className="text-table-muted text-xs">{description}</div>
 							</div>
 							<div className="absolute inset-0 rounded-xl bg-emerald-500/0 group-hover:bg-emerald-500/10 transition-colors duration-200" />
 						</button>

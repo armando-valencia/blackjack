@@ -1,4 +1,4 @@
 export const colors = {
-	redSuit: "var(--card-suit-red)",
-	blackSuit: "var(--card-suit-black)",
+	redSuit: "var(--color-card-suit-red)",
+	blackSuit: "var(--color-card-suit-black)",
 };
