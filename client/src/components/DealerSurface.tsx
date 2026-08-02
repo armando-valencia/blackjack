@@ -57,7 +57,7 @@ const DealerSurface: React.FC<DealerSurfaceProps> = ({ dealerHand, dealerScore, 
 			</div>
 
 			<div className="bg-table-surface/20 border border-table-border/20 rounded-xl px-3 py-4 md:px-6 md:py-5">
-				<div className="flex flex-wrap justify-center gap-2 md:gap-3">
+				<div className="flex w-full max-w-full flex-wrap justify-center gap-1.5 sm:gap-2 md:gap-3">
 					{dealerHand.map((cardString, index) => (
 						<Card
 							key={`dealer-${cardString}-${index}`}

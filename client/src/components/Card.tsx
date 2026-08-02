@@ -51,7 +51,7 @@ const Card: React.FC<CardProps> = ({ card, index = 0, isDealerHoleCard = false }
 	return card === HIDDEN_CARD ? (
 		<div
 			className={`
-				w-20 h-28 sm:w-24 sm:h-32 md:w-28 md:h-40
+				shrink-0 w-[clamp(4rem,18vw,5rem)] h-[clamp(6rem,27vw,7rem)] md:w-28 md:h-40
 				rounded-lg
 				flex flex-col items-center justify-center
 				bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900
@@ -69,7 +69,7 @@ const Card: React.FC<CardProps> = ({ card, index = 0, isDealerHoleCard = false }
 	) : (
 		<div
 			className={`
-				w-20 h-28 sm:w-24 sm:h-32 md:w-28 md:h-40
+				shrink-0 w-[clamp(4rem,18vw,5rem)] h-[clamp(6rem,27vw,7rem)] md:w-28 md:h-40
 				rounded-lg
 				flex flex-col
 				bg-gradient-to-br from-white via-gray-50 to-gray-100
@@ -86,27 +86,27 @@ const Card: React.FC<CardProps> = ({ card, index = 0, isDealerHoleCard = false }
 
 			<div className="flex justify-start p-1 md:p-1.5 z-10">
 				<div className="flex flex-col items-center leading-none gap-0">
-					<span className="text-sm md:text-lg font-bold" style={{ color: suitColor }}>
+					<span className="text-xs sm:text-sm md:text-lg font-bold" style={{ color: suitColor }}>
 						{cardValue?.rank}
 					</span>
-					<span className="text-xs md:text-sm" style={{ color: suitColor }}>
+					<span className="text-[0.65rem] sm:text-xs md:text-sm" style={{ color: suitColor }}>
 						{cardValue?.suitSymbol}
 					</span>
 				</div>
 			</div>
 
 			<div className="flex justify-center items-center flex-grow z-10">
-				<span className="text-2xl md:text-4xl" style={{ color: suitColor }}>
+				<span className="text-xl sm:text-2xl md:text-4xl" style={{ color: suitColor }}>
 					{cardValue?.suitSymbol}
 				</span>
 			</div>
 
 			<div className="flex justify-end p-1 md:p-1.5 z-10">
 				<div className="flex flex-col items-center rotate-180 leading-none gap-0">
-					<span className="text-sm md:text-lg font-bold" style={{ color: suitColor }}>
+					<span className="text-xs sm:text-sm md:text-lg font-bold" style={{ color: suitColor }}>
 						{cardValue?.rank}
 					</span>
-					<span className="text-xs md:text-sm" style={{ color: suitColor }}>
+					<span className="text-[0.65rem] sm:text-xs md:text-sm" style={{ color: suitColor }}>
 						{cardValue?.suitSymbol}
 					</span>
 				</div>
