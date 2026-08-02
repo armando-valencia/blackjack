@@ -43,6 +43,7 @@ npm run preview      # Preview production build
 - **[server/main.py](server/main.py)**: Entry point - starts WebSocket server on localhost:8765
 - **[server/websocket_handler.py](server/websocket_handler.py)**: WebSocket transport - manages connections, JSON messages, broadcasting, and bot-turn timing
 - **[server/game/service.py](server/game/service.py)**: Transport-independent command service that validates and executes game commands
+- **[server/game/session.py](server/game/session.py)**: Owns one shared game service, connected clients, and serialized command access
 - **[server/game/state_serializer.py](server/game/state_serializer.py)**: Converts game state into the client protocol shape
 - **[server/game/logic.py](server/game/logic.py)**: Core game logic in `BlackjackGame` class - manages deck, hands, scoring, and game states (waiting/playing/dealer_turn/game_over)
 - **[server/game/cards.py](server/game/cards.py)**: Card and deck creation
@@ -85,7 +86,7 @@ npm run preview      # Preview production build
 
 - **Dealer's Hidden Card**: During player's turn, `serialize_game_state()` sends dealer's first card and "Hidden" placeholder. On game over, the same serializer reveals all dealer cards.
 - **Game Flow**: `deal_initial_hand()` → `player_hit()` (repeatable) → `player_stand()` → `dealer_turn()` (automatic, dealer hits until 17+) → game over
-- **State Management**: Each WebSocket connection gets its own `BlackjackGame` instance stored in `active_games` dict (keyed by websocket). Instance is deleted on disconnect.
+- **State Management**: Connections share a `GameSession` for the local game; the session owns connected clients and serializes commands. Empty sessions are removed after the final disconnect.
 - **Immediate Blackjack**: If either player gets 21 on initial deal, game immediately transitions to game_over state.
 
 ## Tech Stack Notes
