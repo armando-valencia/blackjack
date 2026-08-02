@@ -1,5 +1,7 @@
 import random
 
+from utils import PlayerAction
+
 BOT_NAMES = [
     "Alice", "Bob", "Charlie", "Diana", "Eve", "Frank", "Grace", "Hank",
     "Ivy", "Jack", "Kathy", "Leo", "Mona", "Nina", "Oscar", "Pam", "Quinn",
@@ -37,6 +39,6 @@ def make_bot_decision(hand_score: int, dealer_upcard_value: int) -> str:
         "hit" or "stand"
     """
     if hand_score < 17:
-        return "hit"
+        return PlayerAction.HIT.value
     else:
-        return "stand"
+        return PlayerAction.STAND.value

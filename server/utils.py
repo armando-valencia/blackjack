@@ -4,13 +4,31 @@ import enum
 class GameStatus(enum.Enum):
     DEALER_TURN = "dealer_turn"
     GAME_OVER = "game_over"
-    PLAYER_TURN = "player_turn"
+    PLAYING = "playing"
     WAITING = "waiting"
 
 class GameResult(enum.Enum):
     WIN = "win"
     LOSE = "lose"
     PUSH = "push"
+
+
+class PlayerAction(enum.Enum):
+    HIT = "hit"
+    STAND = "stand"
+
+
+class ControlMessageType(enum.Enum):
+    SET_PLAYER_COUNT = "set_player_count"
+    DEAL_INITIAL = "deal_initial"
+    HIT = PlayerAction.HIT.value
+    STAND = PlayerAction.STAND.value
+
+
+class ServerMessageType(enum.Enum):
+    GAME_STATE = "game_state"
+    GAME_OVER = "game_over"
+    ERROR = "error"
 
 class GameMessage(enum.Enum):
     BLACKJACK = "Blackjack! You win!"

@@ -2,6 +2,7 @@ import asyncio
 import websockets
 import json
 from game.logic import BlackjackGame
+from utils import ControlMessageType, GameStatus, ServerMessageType
 
 # Store active games and their connected clients
 active_games = {}
@@ -29,7 +30,7 @@ async def process_bot_turns(game: BlackjackGame, game_id: str):
     Process all consecutive bot turns automatically.
     Broadcasts state after each bot action.
     """
-    while game.game_status == "playing":
+    while game.game_status == GameStatus.PLAYING.value:
         current_player = game.players[game.current_player_index]
 
         # If current player is human, stop and wait for their input
@@ -85,7 +86,7 @@ async def handler(websocket):
                 print(f"Parsed request: {request}")
 
                 if message_type := request.get("type"):
-                    if message_type == "set_player_count":
+                    if message_type == ControlMessageType.SET_PLAYER_COUNT.value:
                         # Initialize game with specified number of players
                         num_players = request.get("num_players", 2)
                         game.initialize_players(num_players)
@@ -95,7 +96,7 @@ async def handler(websocket):
                         state = game.get_game_state_for_frontend()
                         await broadcast_to_clients(game_id, state)
 
-                    elif message_type == "deal_initial":
+                    elif message_type == ControlMessageType.DEAL_INITIAL.value:
                         game.deal_initial_hand()
                         print(f"Game status after dealing: {game.game_status}")
 
@@ -104,11 +105,11 @@ async def handler(websocket):
                         await broadcast_to_clients(game_id, state)
 
                         # If first player is a bot, process bot turns
-                        if game.game_status == "playing":
+                        if game.game_status == GameStatus.PLAYING.value:
                             await process_bot_turns(game, game_id)
 
-                    elif message_type == "hit":
-                        if game.game_status == "playing":
+                    elif message_type == ControlMessageType.HIT.value:
+                        if game.game_status == GameStatus.PLAYING.value:
                             current_player = game.players[game.current_player_index]
 
                             # Only allow human player to hit
@@ -121,11 +122,11 @@ async def handler(websocket):
 
                                 # If player didn't bust/stand, they can hit again
                                 # If player's turn ended, process bot turns
-                                if game.game_status == "playing":
+                                if game.game_status == GameStatus.PLAYING.value:
                                     await process_bot_turns(game, game_id)
 
-                    elif message_type == "stand":
-                        if game.game_status == "playing":
+                    elif message_type == ControlMessageType.STAND.value:
+                        if game.game_status == GameStatus.PLAYING.value:
                             current_player = game.players[game.current_player_index]
 
                             # Only allow human player to stand
@@ -137,17 +138,31 @@ async def handler(websocket):
                                 await broadcast_to_clients(game_id, state)
 
                                 # Process bot turns after human stands
-                                if game.game_status == "playing":
+                                if game.game_status == GameStatus.PLAYING.value:
                                     await process_bot_turns(game, game_id)
 
             except json.JSONDecodeError:
                 print(f"Invalid JSON received: {message}")
-                await websocket.send(json.dumps({"type": "error", "message": "Invalid JSON format."}))
+                await websocket.send(
+                    json.dumps(
+                        {
+                            "type": ServerMessageType.ERROR.value,
+                            "message": "Invalid JSON format.",
+                        }
+                    )
+                )
             except Exception as e:
                 print(f"Error processing message: {e}")
                 import traceback
                 traceback.print_exc()
-                await websocket.send(json.dumps({"type": "error", "message": f"Server error: {e}"}))
+                await websocket.send(
+                    json.dumps(
+                        {
+                            "type": ServerMessageType.ERROR.value,
+                            "message": f"Server error: {e}",
+                        }
+                    )
+                )
 
     except websockets.exceptions.ConnectionClosedOK:
         print("Client disconnected normally")
