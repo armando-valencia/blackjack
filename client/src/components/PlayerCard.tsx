@@ -10,12 +10,15 @@ interface PlayerCardProps {
 }
 
 const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant = "full" }) => {
-	const getStatusColor = () => {
-		if (player.result === GAME_RESULT.WIN) return "text-emerald-400";
-		if (player.result === GAME_RESULT.LOSE) return "text-red-400";
-		if (player.result === GAME_RESULT.PUSH) return "text-slate-400";
-		if (isCurrentTurn) return "text-emerald-400";
-		return "text-slate-400";
+	const getStatusClass = () => {
+		if (player.result === GAME_RESULT.WIN) return "table-status--win";
+		if (player.result === GAME_RESULT.LOSE) return "table-status--loss";
+		if (player.result === GAME_RESULT.PUSH) return "table-status--push";
+		if (isCurrentTurn && player.is_human) return "table-status--turn";
+		if (isCurrentTurn) return "table-status--bot-turn";
+		if (player.status === PLAYER_STATUS.BUST) return "table-status--bust";
+		if (player.status === PLAYER_STATUS.STANDING) return "table-status--standing";
+		return "table-status--waiting";
 	};
 
 	const getStatusText = () => {
@@ -32,38 +35,31 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant 
 	};
 
 	const getBorderClass = () => {
-		if (isCurrentTurn && player.is_human) {
-			return "border-emerald-500/70 shadow-[0_0_20px_rgba(16,185,129,0.3)]";
-		}
-		if (isCurrentTurn) {
-			return "border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.2)]";
-		}
-		if (player.status === PLAYER_STATUS.DONE) {
-			return "border-slate-700/30 opacity-70";
-		}
-		return "border-slate-700/30";
+		if (isCurrentTurn && player.is_human) return "table-player--active-human";
+		if (isCurrentTurn) return "table-player--active-bot";
+		if (player.status === PLAYER_STATUS.DONE) return "table-player--complete";
+		return "";
 	};
 
-	// Compact variant for bots on mobile
 	if (variant === "compact") {
 		return (
 			<div
-				className={`bg-slate-800/30 backdrop-blur-sm border-2 rounded-xl p-3 transition-all duration-300 ${getBorderClass()}`}
+				className={`table-player rounded-xl p-3 ${getBorderClass()}`}
 			>
 				<div className="flex items-center justify-between">
 					<div className="flex items-center gap-2">
-						<span className={`text-sm font-medium ${player.is_human ? "text-emerald-400" : "text-slate-300"}`}>
+						<span className={`text-sm font-medium ${player.is_human ? "table-player__name--human" : "table-player__name--bot"}`}>
 							{player.name}
 						</span>
-						{!player.is_human && <span className="text-xs text-slate-500">(Bot)</span>}
+						{!player.is_human && <span className="table-player__meta text-xs">(Bot)</span>}
 					</div>
 					<div className="flex items-center gap-3">
-						<span className="text-slate-400 text-sm">{player.hand.length} cards</span>
-						<div className="px-2 py-1 bg-slate-900/60 border border-slate-600/50 rounded">
-							<span className="text-white font-bold text-sm">{player.score}</span>
+						<span className="table-player__meta text-sm">{player.hand.length} cards</span>
+						<div className="table-score px-2 py-1 rounded">
+							<span className="font-bold text-sm">{player.score}</span>
 						</div>
 						{getStatusText() && (
-							<span className={`text-xs font-medium ${getStatusColor()}`}>{getStatusText()}</span>
+							<span className={`text-xs font-medium ${getStatusClass()}`}>{getStatusText()}</span>
 						)}
 					</div>
 				</div>
@@ -71,25 +67,24 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant 
 		);
 	}
 
-	// Full variant with cards displayed
 	return (
 		<div
-			className={`bg-slate-800/30 backdrop-blur-sm border-2 rounded-xl p-4 md:p-6 transition-all duration-300 ${getBorderClass()}`}
+			className={`table-player rounded-xl p-4 md:p-6 ${getBorderClass()}`}
 		>
 			<div className="flex items-center justify-between mb-4">
 				<div className="flex items-center gap-2">
-					<h3 className={`text-base md:text-lg font-medium ${player.is_human ? "text-emerald-400" : "text-slate-300"}`}>
+					<h3 className={`text-base md:text-lg font-medium ${player.is_human ? "table-player__name--human" : "table-player__name--bot"}`}>
 						{player.name}
 					</h3>
-					{!player.is_human && <span className="text-xs text-slate-500">(Bot)</span>}
+					{!player.is_human && <span className="table-player__meta text-xs">(Bot)</span>}
 					{isCurrentTurn && (
-						<span className={`ml-2 px-2 py-0.5 rounded text-xs font-medium ${getStatusColor()} bg-slate-900/60`}>
+						<span className={`table-status-badge ml-2 px-2 py-0.5 rounded text-xs font-medium ${getStatusClass()}`}>
 							{getStatusText()}
 						</span>
 					)}
 				</div>
-				<div className={`px-3 py-1 ${player.is_human ? "bg-emerald-500/10 border-emerald-500/30" : "bg-slate-900/60 border-slate-600/50"} border rounded-md`}>
-					<span className={`${player.is_human ? "text-emerald-400" : "text-white"} font-bold`}>
+				<div className={`table-score ${player.is_human ? "table-score--human" : ""} px-3 py-1 rounded-md`}>
+					<span className="font-bold">
 						{player.score}
 					</span>
 				</div>
@@ -106,12 +101,12 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant 
 			{player.status === PLAYER_STATUS.DONE && player.result && (
 				<div className="mt-4 flex justify-center">
 					<div
-						className={`px-6 py-2 rounded-lg font-bold text-lg ${
+						className={`table-result px-6 py-2 rounded-lg font-bold text-lg ${
 							player.result === GAME_RESULT.WIN
-								? "bg-emerald-500/20 border-2 border-emerald-500 text-emerald-400"
-								: player.result === GAME_RESULT.LOSE
-								? "bg-red-500/20 border-2 border-red-500 text-red-400"
-								: "bg-blue-500/20 border-2 border-blue-500 text-blue-400"
+								? "table-result--win"
+							: player.result === GAME_RESULT.LOSE
+								? "table-result--loss"
+								: "table-result--push"
 						}`}
 					>
 						{player.result === GAME_RESULT.WIN ? "YOU WIN!" : player.result === GAME_RESULT.LOSE ? "YOU LOSE" : "PUSH"}

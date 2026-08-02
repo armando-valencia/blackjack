@@ -21,22 +21,15 @@ const Button: React.FC<ButtonProps> = ({
 		px-8 py-3 md:px-10 md:py-4
 		rounded-lg
 		font-semibold text-base md:text-lg
-		text-white
-		shadow-[0_4px_14px_0_rgba(0,0,0,0.4)]
-		border border-black/20
-		transform active:scale-95
-		transition-all duration-200
-		hover:shadow-[0_6px_20px_0_rgba(0,0,0,0.5)]
-		hover:-translate-y-0.5
+		table-button
 		relative
 		min-w-[140px] md:min-w-[160px]
-		disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
 	`;
 
 	const variantStyles = {
-		[BUTTON_VARIANT.DEAL]: "bg-gradient-to-b from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600",
-		[BUTTON_VARIANT.HIT]: "bg-gradient-to-b from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600",
-		[BUTTON_VARIANT.STAND]: "bg-gradient-to-b from-slate-600 to-slate-700 hover:from-slate-500 hover:to-slate-600",
+		[BUTTON_VARIANT.DEAL]: "table-button--deal",
+		[BUTTON_VARIANT.HIT]: "table-button--hit",
+		[BUTTON_VARIANT.STAND]: "table-button--stand",
 	};
 
 	return (
