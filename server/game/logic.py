@@ -1,4 +1,4 @@
-from game.cards import Card, create_deck
+from game.cards import Card, Rank, create_deck
 from game.hand import calculate_hand_value
 from game.player import PlayerState, PlayerStatus
 from game.bot_player import get_random_bot_name, make_bot_decision
@@ -24,8 +24,11 @@ class BlackjackGame:
         if len(hand) != 2:
             return False
 
-        has_ace = any(card.rank == 'A' for card in hand)
-        has_ten_value = any(card.rank in ('10', 'J', 'Q', 'K') for card in hand)
+        has_ace = any(card.rank == Rank.ACE for card in hand)
+        has_ten_value = any(
+            card.rank in (Rank.TEN, Rank.JACK, Rank.QUEEN, Rank.KING)
+            for card in hand
+        )
 
         return has_ace and has_ten_value
 
