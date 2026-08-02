@@ -5,6 +5,7 @@ import { colors } from "../theme";
 interface CardProps {
 	card: string;
 	index?: number;
+	isDealerHoleCard?: boolean;
 }
 
 interface CardValue {
@@ -36,7 +37,7 @@ const getCardValue = (card: string): CardValue => {
 	};
 };
 
-const Card: React.FC<CardProps> = ({ card, index = 0 }) => {
+const Card: React.FC<CardProps> = ({ card, index = 0, isDealerHoleCard = false }) => {
 	const [cardValue, setCardValue] = useState<CardValue | null>(null);
 
 	useEffect(() => {
@@ -48,7 +49,7 @@ const Card: React.FC<CardProps> = ({ card, index = 0 }) => {
 
 	return card === HIDDEN_CARD ? (
 		<div
-			className="
+			className={`
 				w-20 h-28 sm:w-24 sm:h-32 md:w-28 md:h-40
 				rounded-lg
 				flex flex-col items-center justify-center
@@ -58,7 +59,7 @@ const Card: React.FC<CardProps> = ({ card, index = 0 }) => {
 				animate-[flipIn_0.4s_ease-out]
 				relative
 				overflow-hidden
-			"
+			`}
 			style={{ animationDelay }}
 		>
 			<div className="absolute inset-0 rounded-lg bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,rgba(255,255,255,0.03)_10px,rgba(255,255,255,0.03)_20px)]" />
@@ -66,7 +67,7 @@ const Card: React.FC<CardProps> = ({ card, index = 0 }) => {
 		</div>
 	) : (
 		<div
-			className="
+			className={`
 				w-20 h-28 sm:w-24 sm:h-32 md:w-28 md:h-40
 				rounded-lg
 				flex flex-col
@@ -74,10 +75,10 @@ const Card: React.FC<CardProps> = ({ card, index = 0 }) => {
 				shadow-[0_10px_40px_-10px_rgba(0,0,0,0.6),0_2px_8px_-2px_rgba(0,0,0,0.3)]
 				border-2 border-gray-200
 				transform hover:scale-105 transition-all duration-300
-				animate-[slideIn_0.3s_ease-out]
+				${isDealerHoleCard ? "animate-[flipIn_0.4s_ease-out]" : "animate-[slideIn_0.3s_ease-out]"}
 				relative
 				overflow-hidden
-			"
+			`}
 			style={{ animationDelay }}
 		>
 			<div className="absolute inset-0 rounded-lg bg-gradient-to-br from-white/40 to-transparent pointer-events-none" />

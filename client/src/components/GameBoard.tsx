@@ -1,5 +1,5 @@
 import React from "react";
-import Card from "./Card";
+import DealerSurface from "./DealerSurface";
 import GameMessage from "./GameMessage";
 import GameControls from "./GameControls";
 import PlayerCard from "./PlayerCard";
@@ -21,21 +21,11 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand, isA
 	return (
 		<div className="max-w-4xl mx-auto">
 			<div className="bg-table-surface/40 backdrop-blur-xl border border-table-border/30 rounded-2xl shadow-[0_20px_60px_-10px_rgba(0,0,0,0.5)] overflow-hidden">
-				<div className="bg-table-surface-raised/30 border-b border-table-border/30 p-4 md:p-5">
-					<div className="flex items-center justify-between mb-3">
-						<h3 className="text-table-dealer text-sm font-medium tracking-wider uppercase">Dealer</h3>
-						<div className="bg-table-surface/60 border border-table-border/50 text-table-text px-3 py-1 rounded-md">
-							<span className="font-bold">{game.dealer_score}</span>
-						</div>
-					</div>
-					<div className="flex justify-center">
-						<div className="flex gap-2 md:gap-3">
-							{game.dealer_hand.map((cardString, index) => (
-								<Card key={`dealer-${cardString}-${index}`} card={cardString} index={index} />
-							))}
-						</div>
-					</div>
-				</div>
+				<DealerSurface
+					dealerHand={game.dealer_hand}
+					dealerScore={game.dealer_score}
+					gameStatus={game.game_status}
+				/>
 
 				{game.message && (
 					<div className="bg-table-surface/20 border-y border-table-border/20 px-4 md:px-6 py-2.5">
