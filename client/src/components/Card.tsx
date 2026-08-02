@@ -54,7 +54,7 @@ const Card: React.FC<CardProps> = ({ card, index = 0 }) => {
 				flex flex-col items-center justify-center
 				bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900
 				shadow-[0_10px_40px_-10px_rgba(0,0,0,0.6)]
-				border-2 border-slate-600/50
+				border-2 border-table-border/50
 				animate-[flipIn_0.4s_ease-out]
 				relative
 				overflow-hidden
