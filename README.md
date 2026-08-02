@@ -1,6 +1,6 @@
 # Blackjack
 
-A simple single player Blackjack game using React for the frontend and Python for the backend, communicating via websockets.
+A local multiplayer Blackjack game with a React frontend and Python WebSocket backend. A human player can play against the dealer with configurable bot players.
 
 ## Project Structure
 
@@ -96,6 +96,16 @@ From the project root, activate the virtual environment and run:
 pytest server/tests
 ```
 
+### Run all quality checks
+
+From the project root, activate the virtual environment and run:
+
+```bash
+./scripts/verify.sh
+```
+
+This runs the Python test suite and the client lint and production build checks.
+
 ### Git workflow helpers
 
 After a PR is merged, sync the local base branch with:
@@ -112,9 +122,9 @@ Start the next feature branch from the updated base with:
 
 These helpers refuse tracked changes and never commit, push, stash, reset, or delete files.
 
-## Features to add
+## Current scope
 
-- Improve UI/UX with better styling and animations
-- Add online multiplayer support
-- Add free for all mode (multiple players against each other)
-- Add more randomness to bot behavior
+- Local multiplayer sessions with one human player and optional bots.
+- Dealer and player turn handling over WebSockets.
+- Responsive React client with reconnect handling.
+- Python rule tests and client quality checks.
