@@ -38,6 +38,11 @@ const PLAYER_RESULT_LABELS: Record<GameResult, string> = {
 	[GAME_RESULT.LOSE]: "YOU LOSE",
 	[GAME_RESULT.PUSH]: "PUSH",
 };
+const PLAYER_RESULT_SUMMARY_LABELS: Record<GameResult, { human: string; bot: string }> = {
+	[GAME_RESULT.WIN]: { human: "You win!", bot: "Wins" },
+	[GAME_RESULT.LOSE]: { human: "You lose", bot: "Loses" },
+	[GAME_RESULT.PUSH]: { human: "Push", bot: "Push" },
+};
 const PLAYER_STATUS_LABELS: Partial<Record<PlayerStatus, string>> = {
 	[PLAYER_STATUS.BUST]: "BUST",
 	[PLAYER_STATUS.STANDING]: "STANDING",
@@ -72,6 +77,21 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant 
 
 	const nameClass = player.is_human ? "text-table-active" : "text-table-dealer";
 	const scoreClass = player.is_human ? "text-table-active" : "text-table-text";
+	const roleLabel = player.is_human ? "You" : "Bot";
+	const turnLabel = player.is_human ? "Your turn" : "Bot turn";
+	const resultLabel = player.result
+		? player.is_human
+			? PLAYER_RESULT_SUMMARY_LABELS[player.result].human
+			: player.result === GAME_RESULT.PUSH
+				? PLAYER_RESULT_SUMMARY_LABELS[player.result].bot
+				: `${player.name} ${PLAYER_RESULT_SUMMARY_LABELS[player.result].bot}`
+		: "";
+	const turnIndicator = isCurrentTurn ? (
+		<span className="bg-table-surface/60 text-table-text inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium">
+			<span aria-hidden="true">●</span>
+			{turnLabel}
+		</span>
+	) : null;
 
 	if (variant === "compact") {
 		return (
@@ -79,14 +99,16 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant 
 				<div className="flex items-center justify-between">
 					<div className="flex items-center gap-2">
 						<span className={`text-sm font-medium ${nameClass}`}>{player.name}</span>
-						{!player.is_human && <span className="text-table-subtle text-xs">(Bot)</span>}
+						<span className="text-table-subtle text-xs">({roleLabel})</span>
 					</div>
 					<div className="flex items-center gap-3">
 						<span className="text-table-muted text-sm">{player.hand.length} cards</span>
 						<div className="bg-table-surface/60 border border-table-border/50 px-2 py-1 rounded">
 							<span className="text-table-text font-bold text-sm">{player.score}</span>
 						</div>
-						{getStatusText() && <span className={`text-xs font-medium ${getStatusClass()}`}>{getStatusText()}</span>}
+						{turnIndicator}
+						{getStatusText() && !player.result && <span className={`text-xs font-medium ${getStatusClass()}`}>{getStatusText()}</span>}
+						{resultLabel && <span className={`text-xs font-medium ${getStatusClass()}`}>{resultLabel}</span>}
 					</div>
 				</div>
 			</div>
@@ -98,9 +120,10 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant 
 			<div className="flex items-center justify-between mb-4">
 				<div className="flex items-center gap-2">
 					<h3 className={`text-base md:text-lg font-medium ${nameClass}`}>{player.name}</h3>
-					{!player.is_human && <span className="text-table-subtle text-xs">(Bot)</span>}
-					{isCurrentTurn && (
-						<span className={`bg-table-surface/60 ml-2 px-2 py-0.5 rounded text-xs font-medium ${getStatusClass()}`}>
+					<span className="text-table-subtle text-xs">({roleLabel})</span>
+					{turnIndicator}
+					{isCurrentTurn && getStatusText() && (
+						<span className={`bg-table-surface/60 px-2 py-0.5 rounded text-xs font-medium ${getStatusClass()}`}>
 							{getStatusText()}
 						</span>
 					)}
@@ -121,7 +144,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant 
 			{player.status === PLAYER_STATUS.DONE && player.result && (
 				<div className="mt-4 flex justify-center">
 					<div className={`px-6 py-2 rounded-lg font-bold text-lg border-2 ${PLAYER_RESULT_BADGE_CLASSES[player.result]}`}>
-						{PLAYER_RESULT_LABELS[player.result]}
+						{player.is_human ? PLAYER_RESULT_LABELS[player.result] : resultLabel}
 					</div>
 				</div>
 			)}
