@@ -28,6 +28,7 @@ class ControlMessageType(enum.Enum):
 class ServerMessageType(enum.Enum):
     GAME_STATE = "game_state"
     GAME_OVER = "game_over"
+    ACTION_RESULT = "action_result"
     ERROR = "error"
 
 class GameMessage(enum.Enum):
