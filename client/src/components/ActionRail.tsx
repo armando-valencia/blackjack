@@ -53,7 +53,7 @@ const ActionRail: React.FC<ActionRailProps> = ({
 
 		if (gameStatus === GAME_STATUS.PLAYING && isHumanTurn) {
 			return (
-				<div className="flex flex-col sm:flex-row justify-center gap-3">
+				<div className="flex flex-col sm:flex-row justify-center gap-3 w-full sm:w-auto">
 					<Button onClick={onHit} variant={BUTTON_VARIANT.HIT} disabled={isActionPending}>
 						{isActionPending ? "Working..." : "Hit"}
 					</Button>
@@ -76,7 +76,7 @@ const ActionRail: React.FC<ActionRailProps> = ({
 	};
 
 	return (
-		<section aria-label="Round actions" className="bg-table-surface-raised/30 border-t border-table-border/30 p-4 md:p-5">
+		<section aria-label="Round actions" className="sticky bottom-0 z-30 bg-table-surface-raised/90 backdrop-blur-xl border border-table-border/30 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] md:p-5 md:pb-5">
 			<div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
 				<div>
 					<p className="text-table-subtle text-xs font-medium tracking-[0.2em] uppercase">Round actions</p>
