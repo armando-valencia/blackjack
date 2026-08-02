@@ -46,7 +46,7 @@ const Button: React.FC<ButtonProps> = ({
 			aria-busy={disabled}
 			className={`${BUTTON_BASE_CLASSES} ${BUTTON_VARIANT_CLASSES[variant]} ${className}`}
 		>
-			<div className="absolute inset-0 rounded-lg bg-gradient-to-t from-black/10 to-transparent pointer-events-none" />
+			<div aria-hidden="true" className="absolute inset-0 rounded-lg bg-gradient-to-t from-black/10 to-transparent pointer-events-none" />
 			<span className="relative z-10">{children}</span>
 		</button>
 	);

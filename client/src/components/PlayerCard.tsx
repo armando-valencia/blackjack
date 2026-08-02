@@ -102,7 +102,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant 
 
 	if (variant === "compact") {
 		return (
-			<div className={`${PLAYER_BASE_CLASSES} p-3 sm:p-4 ${getBorderClass()}`}>
+			<article className={`${PLAYER_BASE_CLASSES} p-3 sm:p-4 ${getBorderClass()}`}>
 				<div className="flex flex-wrap items-center justify-between gap-3">
 					<div className="min-w-0 flex flex-1 items-center gap-2">
 						<span className={`truncate text-sm font-medium ${nameClass}`}>{player.name}</span>
@@ -110,10 +110,10 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant 
 					</div>
 					<div className="flex flex-wrap items-center justify-end gap-2">
 						<span className="text-table-muted text-sm">{player.hand.length} cards</span>
-						<div className="bg-table-surface/60 border border-table-border/50 rounded px-2 py-1">
-							<span className="text-table-subtle text-[0.6rem] uppercase tracking-wider mr-1">Score</span>
-							<span className="text-table-text font-bold text-sm" aria-label={`Score ${player.score}`}>{player.score}</span>
-						</div>
+						<dl className="bg-table-surface/60 border border-table-border/50 rounded px-2 py-1">
+							<dt className="sr-only">Score</dt>
+							<dd className="text-table-text font-bold text-sm">{player.score}</dd>
+						</dl>
 					</div>
 				</div>
 				<div className="mt-2 flex flex-wrap items-center gap-2">
@@ -121,12 +121,12 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant 
 						{getStatusText() && !player.result && <span className={`text-xs font-medium ${getStatusClass()}`}>{getStatusText()}</span>}
 						{resultLabel && <span className={`text-xs font-medium ${getStatusClass()}`}>{resultLabel}</span>}
 				</div>
-			</div>
+			</article>
 		);
 	}
 
 	return (
-		<div className={`${PLAYER_BASE_CLASSES} p-4 md:p-6 ${getBorderClass()}`}>
+		<article className={`${PLAYER_BASE_CLASSES} p-4 md:p-6 ${getBorderClass()}`}>
 			<div className="flex items-start justify-between gap-3 mb-4">
 				<div className="min-w-0 flex flex-wrap items-center gap-2">
 					<h3 className={`truncate text-base md:text-lg font-medium ${nameClass}`}>{player.name}</h3>
@@ -138,27 +138,30 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant 
 						</span>
 					)}
 				</div>
-				<div className={`shrink-0 bg-table-surface/60 border border-table-border/50 px-3 py-1 rounded-md ${player.is_human ? "bg-table-active/10 border-table-active/30" : ""}`}>
-					<span className={`${scoreClass} font-bold`}>{player.score}</span>
-				</div>
+				<dl className={`shrink-0 bg-table-surface/60 border border-table-border/50 px-3 py-1 rounded-md ${player.is_human ? "bg-table-active/10 border-table-active/30" : ""}`}>
+					<dt className="sr-only">Score</dt>
+					<dd className={`${scoreClass} font-bold`}>{player.score}</dd>
+				</dl>
 			</div>
 
 			<div className="flex justify-center">
-				<div className="flex w-full max-w-full gap-1.5 sm:gap-2 md:gap-3 flex-wrap justify-center">
+				<ul className="flex w-full max-w-full gap-1.5 sm:gap-2 md:gap-3 flex-wrap justify-center" aria-label={`${player.name}'s hand`}>
 					{player.hand.map((cardString, index) => (
-						<Card key={`${player.player_id}-${cardString}-${index}`} card={cardString} index={index} />
+						<li key={`${player.player_id}-${cardString}-${index}`}>
+							<Card card={cardString} index={index} />
+						</li>
 					))}
-				</div>
+				</ul>
 			</div>
 
 			{player.status === PLAYER_STATUS.DONE && player.result && (
 				<div className="mt-4 flex justify-center">
-					<div className={`px-6 py-2 rounded-lg font-bold text-lg border-2 animate-[resultReveal_0.35s_ease-out] ${PLAYER_RESULT_BADGE_CLASSES[player.result]}`}>
+					<p className={`px-6 py-2 rounded-lg font-bold text-lg border-2 animate-[resultReveal_0.35s_ease-out] ${PLAYER_RESULT_BADGE_CLASSES[player.result]}`}>
 						{player.is_human ? PLAYER_RESULT_LABELS[player.result] : resultLabel}
-					</div>
+					</p>
 				</div>
 			)}
-		</div>
+		</article>
 	);
 };
 

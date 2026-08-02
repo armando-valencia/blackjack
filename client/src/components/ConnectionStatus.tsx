@@ -45,7 +45,7 @@ const ConnectionStatus: React.FC<ConnectionStatusProps> = ({ status, hasError })
 	return (
 		<div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-50 pointer-events-none" role="status" aria-live="polite">
 			<div className="flex items-center gap-2 px-3 py-2 glass rounded-full">
-				<div className={`w-2 h-2 ${config.color} rounded-full ${config.pulse ? "animate-pulse" : ""}`} />
+				<div aria-hidden="true" className={`w-2 h-2 ${config.color} rounded-full ${config.pulse ? "animate-pulse" : ""}`} />
 				<span className="text-xs text-white/80 hidden sm:inline">{config.text}</span>
 			</div>
 		</div>

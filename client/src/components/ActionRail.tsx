@@ -86,20 +86,20 @@ const ActionRail: React.FC<ActionRailProps> = ({
 			</div>
 
 			{gameStatus === GAME_STATUS.GAME_OVER && (
-				<div className="mt-4 grid grid-cols-3 gap-2 border-t border-table-border/20 pt-4 text-center">
+				<dl className="mt-4 grid grid-cols-3 gap-2 border-t border-table-border/20 pt-4 text-center">
 					<div>
-						<p className="text-table-subtle text-xs uppercase tracking-wider">Dealer</p>
-						<p className="text-table-text font-semibold">{dealerScore}</p>
+						<dt className="text-table-subtle text-xs uppercase tracking-wider">Dealer</dt>
+						<dd className="text-table-text font-semibold">{dealerScore}</dd>
 					</div>
 					<div>
-						<p className="text-table-subtle text-xs uppercase tracking-wider">You</p>
-						<p className="text-table-text font-semibold">{playerScore ?? "—"}</p>
+						<dt className="text-table-subtle text-xs uppercase tracking-wider">You</dt>
+						<dd className="text-table-text font-semibold">{playerScore ?? "—"}</dd>
 					</div>
 					<div>
-						<p className="text-table-subtle text-xs uppercase tracking-wider">Result</p>
-						<p className="text-table-active font-semibold">{playerResult ? RESULT_LABELS[playerResult] : "Round over"}</p>
+						<dt className="text-table-subtle text-xs uppercase tracking-wider">Result</dt>
+						<dd className="text-table-active font-semibold">{playerResult ? RESULT_LABELS[playerResult] : "Round over"}</dd>
 					</div>
-				</div>
+				</dl>
 			)}
 		</section>
 	);
