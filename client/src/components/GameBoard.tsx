@@ -20,8 +20,8 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand, isA
 	const isHumanTurn = game.game_status === GAME_STATUS.PLAYING && humanPlayer && game.current_player_index === humanPlayer.player_id;
 
 	return (
-		<div className="max-w-4xl mx-auto">
-			<div className="bg-table-surface/40 backdrop-blur-xl border border-table-border/30 rounded-2xl shadow-[0_20px_60px_-10px_rgba(0,0,0,0.5)] overflow-hidden">
+		<div className="w-full max-w-4xl min-w-0 mx-auto">
+			<div className="w-full min-w-0 bg-table-surface/40 backdrop-blur-xl border border-table-border/30 rounded-2xl shadow-[0_20px_60px_-10px_rgba(0,0,0,0.5)] overflow-hidden">
 				<DealerSurface
 					dealerHand={game.dealer_hand}
 					dealerScore={game.dealer_score}

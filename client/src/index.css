@@ -26,6 +26,7 @@
 		background: var(--color-table-page-start);
 		color: var(--color-table-text);
 		font-family: ui-sans-serif, system-ui, sans-serif;
+		overflow-x: hidden;
 	}
 
 	button:focus-visible,
