@@ -2,7 +2,13 @@ name: CI
 
 on:
   push:
+    paths-ignore:
+      - "**.md"
+      - ".agents/**"
   pull_request:
+    paths-ignore:
+      - "**.md"
+      - ".agents/**"
 
 permissions:
   contents: read
