@@ -14,9 +14,9 @@ const PlayerSelect: React.FC<PlayerSelectProps> = ({ onSelectPlayerCount }) => {
 
 	return (
 		<section aria-labelledby="player-select-title" className="flex justify-center">
-			<div className="bg-table-surface/60 backdrop-blur-2xl border border-table-border/30 px-4 py-6 sm:px-8 sm:py-10 rounded-2xl max-w-xl w-full">
-				<h2 id="player-select-title" className="text-white text-2xl font-bold text-center mb-2">Choose Players</h2>
-				<p className="text-table-muted text-center mb-8 text-sm">Select how many players vs the Dealer</p>
+			<div className="w-full max-w-xl rounded-lg border border-table-border/60 bg-table-surface p-4 sm:p-6">
+				<h2 id="player-select-title" className="text-center font-serif text-2xl font-semibold text-table-text">Choose players</h2>
+				<p className="mb-5 mt-1 text-center text-sm text-table-muted">Select how many players join the table.</p>
 
 				<ul className="grid grid-cols-2 gap-3 sm:gap-4">
 					{playerOptions.map(({ count, label, description }) => (
@@ -24,13 +24,12 @@ const PlayerSelect: React.FC<PlayerSelectProps> = ({ onSelectPlayerCount }) => {
 							<button
 								type="button"
 								onClick={() => onSelectPlayerCount(count)}
-								className="group relative w-full bg-table-surface-raised/50 hover:bg-slate-700/50 border-2 border-table-border/50 hover:border-emerald-500/50 rounded-xl p-4 sm:p-6 transition-all duration-200 hover:scale-105"
+								className="w-full rounded-md border border-table-border/60 bg-table-surface-raised/60 p-4 transition-colors duration-200 hover:border-table-active hover:bg-table-surface-raised sm:p-5"
 							>
 								<span className="block text-center">
 									<span className="block text-xl sm:text-3xl font-bold text-white mb-1">{label}</span>
 									<span className="block text-table-muted text-xs">{description}</span>
 								</span>
-								<span aria-hidden="true" className="absolute inset-0 rounded-xl bg-emerald-500/0 group-hover:bg-emerald-500/10 transition-colors duration-200" />
 							</button>
 						</li>
 					))}

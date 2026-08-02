@@ -36,27 +36,27 @@ const DealerSurface: React.FC<DealerSurfaceProps> = ({ dealerHand, dealerScore, 
 	return (
 		<section
 			aria-labelledby="dealer-surface-title"
-			className="bg-table-surface-raised/30 border-b border-table-border/30 p-4 md:p-6"
+			className="border-b border-table-border/40 bg-table-surface-raised/25 p-3 sm:p-4 md:p-5"
 		>
-			<div className="flex flex-wrap items-start justify-between gap-3 mb-5">
+			<div className="mb-4 flex flex-wrap items-center justify-between gap-3">
 				<div>
-					<p className="text-table-subtle text-xs font-medium tracking-[0.2em] uppercase">House</p>
-					<h2 id="dealer-surface-title" className="text-table-text text-xl md:text-2xl font-semibold">
+					<p className="text-table-subtle text-xs font-medium uppercase tracking-wider">House</p>
+					<h2 id="dealer-surface-title" className="font-serif text-xl font-semibold text-table-text md:text-2xl">
 						Dealer
 					</h2>
 				</div>
 				<div className="flex items-center gap-3">
-					<span className={`text-xs font-medium uppercase tracking-wider ${DEALER_PHASE_CLASSES[gameStatus]}`}>
+					<span className={`text-xs font-medium uppercase tracking-wide ${DEALER_PHASE_CLASSES[gameStatus]}`}>
 						{DEALER_PHASE_LABELS[gameStatus]}
 					</span>
-					<dl className="bg-table-surface/60 border border-table-border/50 rounded-lg px-3 py-2 text-right">
-						<dt className="text-table-muted text-[0.65rem] uppercase tracking-wider">Score</dt>
+					<dl className="rounded-md border border-table-border/60 bg-table-surface px-3 py-1.5 text-right">
+						<dt className="text-table-muted text-[0.65rem] uppercase tracking-wide">Score</dt>
 						<dd className="text-table-text text-lg font-bold leading-none">{dealerScore}</dd>
 					</dl>
 				</div>
 			</div>
 
-			<div className="bg-table-surface/20 border border-table-border/20 rounded-xl px-3 py-4 md:px-6 md:py-5">
+			<div className="border-y border-table-border/20 bg-table-page-start/15 px-2 py-3 sm:px-4 sm:py-4">
 				<div className="flex w-full max-w-full flex-wrap justify-center gap-1.5 sm:gap-2 md:gap-3">
 					{dealerHand.map((cardString, index) => (
 						<Card
