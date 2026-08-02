@@ -49,10 +49,10 @@ const DealerSurface: React.FC<DealerSurfaceProps> = ({ dealerHand, dealerScore, 
 					<span className={`text-xs font-medium uppercase tracking-wider ${DEALER_PHASE_CLASSES[gameStatus]}`}>
 						{DEALER_PHASE_LABELS[gameStatus]}
 					</span>
-					<div className="bg-table-surface/60 border border-table-border/50 rounded-lg px-3 py-2 text-right">
-						<p className="text-table-muted text-[0.65rem] uppercase tracking-wider">Score</p>
-						<p className="text-table-text text-lg font-bold leading-none">{dealerScore}</p>
-					</div>
+					<dl className="bg-table-surface/60 border border-table-border/50 rounded-lg px-3 py-2 text-right">
+						<dt className="text-table-muted text-[0.65rem] uppercase tracking-wider">Score</dt>
+						<dd className="text-table-text text-lg font-bold leading-none">{dealerScore}</dd>
+					</dl>
 				</div>
 			</div>
 

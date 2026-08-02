@@ -13,29 +13,30 @@ const PlayerSelect: React.FC<PlayerSelectProps> = ({ onSelectPlayerCount }) => {
 	];
 
 	return (
-		<div className="flex justify-center">
+		<section aria-labelledby="player-select-title" className="flex justify-center">
 			<div className="bg-table-surface/60 backdrop-blur-2xl border border-table-border/30 px-4 py-6 sm:px-8 sm:py-10 rounded-2xl max-w-xl w-full">
-				<h2 className="text-white text-2xl font-bold text-center mb-2">Choose Players</h2>
+				<h2 id="player-select-title" className="text-white text-2xl font-bold text-center mb-2">Choose Players</h2>
 				<p className="text-table-muted text-center mb-8 text-sm">Select how many players vs the Dealer</p>
 
-				<div className="grid grid-cols-2 gap-3 sm:gap-4">
+				<ul className="grid grid-cols-2 gap-3 sm:gap-4">
 					{playerOptions.map(({ count, label, description }) => (
-						<button
-							type="button"
-							key={count}
-							onClick={() => onSelectPlayerCount(count)}
-							className="group relative bg-table-surface-raised/50 hover:bg-slate-700/50 border-2 border-table-border/50 hover:border-emerald-500/50 rounded-xl p-4 sm:p-6 transition-all duration-200 hover:scale-105"
-						>
-							<div className="text-center">
-								<div className="text-xl sm:text-3xl font-bold text-white mb-1">{label}</div>
-								<div className="text-table-muted text-xs">{description}</div>
-							</div>
-							<div className="absolute inset-0 rounded-xl bg-emerald-500/0 group-hover:bg-emerald-500/10 transition-colors duration-200" />
-						</button>
+						<li key={count}>
+							<button
+								type="button"
+								onClick={() => onSelectPlayerCount(count)}
+								className="group relative w-full bg-table-surface-raised/50 hover:bg-slate-700/50 border-2 border-table-border/50 hover:border-emerald-500/50 rounded-xl p-4 sm:p-6 transition-all duration-200 hover:scale-105"
+							>
+								<span className="block text-center">
+									<span className="block text-xl sm:text-3xl font-bold text-white mb-1">{label}</span>
+									<span className="block text-table-muted text-xs">{description}</span>
+								</span>
+								<span aria-hidden="true" className="absolute inset-0 rounded-xl bg-emerald-500/0 group-hover:bg-emerald-500/10 transition-colors duration-200" />
+							</button>
+						</li>
 					))}
-				</div>
+				</ul>
 			</div>
-		</div>
+		</section>
 	);
 };
 

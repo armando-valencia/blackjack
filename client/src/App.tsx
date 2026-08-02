@@ -22,20 +22,20 @@ function App() {
 
 	return (
 		<div className="flex flex-col items-center justify-start lg:justify-center min-h-dvh w-full overflow-x-hidden bg-gradient-to-br from-table-page-start via-table-page-middle to-table-page-start p-4 py-6 md:p-8 relative">
-			<div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--color-table-glow)_0%,transparent_50%)]" />
-			<div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(15,23,42,0.3),transparent_50%)]" />
-			<div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-700/50 to-transparent" />
+			<div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--color-table-glow)_0%,transparent_50%)]" />
+			<div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(15,23,42,0.3),transparent_50%)]" />
+			<div aria-hidden="true" className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-700/50 to-transparent" />
 
 			<ConnectionStatus status={connectionStatus} hasError={!!errorMessage} />
 			<ErrorToast message={errorMessage} />
 
-			<div className="w-full max-w-6xl min-w-0 relative z-10">
-				<div className="text-center mb-6 md:mb-8">
+			<main className="w-full max-w-6xl min-w-0 relative z-10">
+				<header className="text-center mb-6 md:mb-8">
 					<h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-[0.15em] sm:tracking-[0.3em] mb-2">
 						BLACKJACK
 					</h1>
-					<div className="h-px w-32 mx-auto bg-gradient-to-r from-transparent via-slate-600 to-transparent" />
-				</div>
+					<div aria-hidden="true" className="h-px w-32 mx-auto bg-gradient-to-r from-transparent via-slate-600 to-transparent" />
+				</header>
 
 				{showPlayerSelect && <PlayerSelect onSelectPlayerCount={handlePlayerCountSelect} />}
 
@@ -52,13 +52,13 @@ function App() {
 				<RulesPanel stats={stats} onResetStats={resetStats} />
 
 				{!game && (
-					<div className="flex justify-center">
+					<div className="flex justify-center" role="status" aria-live="polite">
 						<div className="bg-table-surface/60 backdrop-blur-2xl border border-table-border/30 px-8 py-4 rounded-xl">
 							<p className="text-table-muted text-base">Connecting to server...</p>
 						</div>
 					</div>
 				)}
-			</div>
+			</main>
 		</div>
 	);
 }
