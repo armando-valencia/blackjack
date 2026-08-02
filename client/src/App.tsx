@@ -7,7 +7,7 @@ import PlayerSelect from "./components/PlayerSelect";
 import { CONTROL_MESSAGE_TYPE, GAME_STATUS } from "./constants";
 
 function App() {
-	const { game, connectionStatus, errorMessage, sendControlMessage } = useWebSocket("ws://localhost:8765");
+	const { game, connectionStatus, errorMessage, isActionPending, sendControlMessage } = useWebSocket("ws://localhost:8765");
 
 	const handlePlayerCountSelect = (count: number) => {
 		sendControlMessage(CONTROL_MESSAGE_TYPE.SET_PLAYER_COUNT, count);
@@ -41,6 +41,7 @@ function App() {
 						onDeal={() => sendControlMessage(CONTROL_MESSAGE_TYPE.DEAL_INITIAL)}
 						onHit={() => sendControlMessage(CONTROL_MESSAGE_TYPE.HIT)}
 						onStand={() => sendControlMessage(CONTROL_MESSAGE_TYPE.STAND)}
+						isActionPending={isActionPending}
 					/>
 				)}
 
