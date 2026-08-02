@@ -22,6 +22,7 @@ const BUTTON_BASE_CLASSES = `
 	hover:shadow-[0_6px_20px_0_rgba(0,0,0,0.5)]
 	hover:-translate-y-0.5
 	relative
+	min-h-12 w-full sm:w-auto touch-manipulation select-none
 	min-w-[140px] md:min-w-[160px]
 	disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
 `;
