@@ -17,30 +17,12 @@ This file is local project guidance for Codex and must remain untracked. It is n
 - Preserve unrelated user changes.
 - Prefer well-named code over comments. Add comments only when naming cannot express the intent.
 - Keep docstrings to one concise sentence, preferably on a single line; move lengthy explanations into naming, tests, or documentation.
+- Prefer semantic JSX elements and accessible HTML structure over generic containers and presentational substitutes.
 - Do not use one-letter variables or ambiguous function names.
 - Python test names must follow `test__<function name>__<test case>`.
 - Run only the checks relevant to the current PR, then report results and a suggested commit message.
 - Every completed feature handoff must include a suggested commit message that is one sentence maximum.
 - Suggested commit messages should sound natural and human-written, describe the actual change, and avoid generic or overly formal bot-like phrasing.
-
-## Planning workflow
-
-1. Read `.agents/roadmap/README.md` and the relevant phase index.
-2. Read only the selected PR file and its listed dependencies.
-3. Confirm the working tree before editing.
-4. Create the item’s branch if it does not exist.
-5. Track implementation progress and decisions in the selected PR file while working.
-6. Implement only the selected item.
-7. Validate the item and inspect the final diff.
-8. Hand off changed files, checks, known limitations, and a one-sentence suggested commit message.
-
-## Planning-file cleanup
-
-- Keep phase indexes focused on work that is still planned or in progress.
-- After a PR is merged, remove its planning file when no later item depends on it.
-- Remove completed entries from the phase index at the same time.
-- Do not remove planning files that still provide requirements or dependencies for active work.
-- Remove temporary tracking files once their information has been transferred to the roadmap or handoff.
 
 ## Post-merge workflow
 
@@ -54,21 +36,6 @@ After a PR is merged:
 Do not continue feature work from a stale branch after its PR has been merged.
 
 Use `scripts/sync-main.sh` and `scripts/start-feature.sh` for this workflow when the working tree has no tracked changes.
-
-## Roadmap locations
-
-- Overview: `.agents/roadmap/README.md`
-- Stabilization: `.agents/roadmap/stabilization/README.md`
-- Table redesign: `.agents/roadmap/table/README.md`
-- Mobile support: `.agents/roadmap/mobile/README.md`
-- Decisions: `.agents/roadmap/decisions.md`
-
-## Roadmap status
-
-- Completed: S1, S1.5, S1.6, S2, S3, S4, S5, S6, S7, T1, T2, T3, T4, T5, T6, M1, M2, and M3.
-- In progress: M4 — Mobile Controls and Overlays.
-- Pending: M5.
-- Update this snapshot after each merge before starting the next branch.
 
 ## Local-file rule
 

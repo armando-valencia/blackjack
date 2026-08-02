@@ -4,17 +4,23 @@ The client is a Vite React application that communicates with the Python WebSock
 
 ## Commands
 
-Install dependencies and start the development server from this directory:
+Run these commands from the repository root:
 
 ```bash
-npm install
-npm run dev
+npm ci --prefix client
+npm --prefix client run dev
 ```
 
-Run client quality checks:
+Run client linting, tests, and the production build:
 
 ```bash
-npm run check
+npm --prefix client run check
 ```
 
-The check command runs ESLint and the production TypeScript/Vite build.
+Run Vitest in watch mode:
+
+```bash
+npm --prefix client run test:watch
+```
+
+For complete setup instructions, see the [root README](../README.md).
