@@ -37,6 +37,13 @@ Do not continue feature work from a stale branch after its PR has been merged.
 
 Use `scripts/sync-main.sh` and `scripts/start-feature.sh` for this workflow when the working tree has no tracked changes.
 
+## Current roadmap status
+
+- Completed: stabilization and table work through T5.
+- In progress: remove the unwanted rules/session feature.
+- Pending: classic casino visual system, calmer table composition, and responsive refinement.
+- Update this snapshot after each merge and remove planning entries when no longer needed.
+
 ## Local-file rule
 
 Everything under `.agents/` and this file is planning-only. Never stage, commit, or push these files.
