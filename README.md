@@ -109,4 +109,4 @@ These helpers refuse tracked changes and never commit, push, stash, reset, or de
 - Local multiplayer sessions with one human player and optional bots.
 - Dealer and player turn handling over WebSockets.
 - Responsive React client with reconnect handling.
-- Python and client test suites with GitHub Actions verification.
+- Client production builds with uploaded artifacts plus Python and client quality checks in GitHub Actions.
