@@ -46,17 +46,18 @@ export interface ErrorMessage {
 	message: string;
 }
 
+export interface ActionResultMessage {
+	type: typeof SERVER_MESSAGE_TYPE.ACTION_RESULT;
+	action: ControlMessageType;
+	accepted: boolean;
+	message: string;
+}
+
 // All possible server messages
-export type ServerMessage = MultiplayerGameState | ErrorMessage;
+export type ServerMessage = MultiplayerGameState | ErrorMessage | ActionResultMessage;
 
 // Control messages sent to server
 export interface ControlMessage {
 	type: ControlMessageType;
 	num_players?: number;
-}
-
-// Card representation
-export interface Card {
-	rank: string;
-	suit: string;
 }

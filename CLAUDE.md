@@ -42,17 +42,16 @@ npm run preview      # Preview production build
 
 - **[server/main.py](server/main.py)**: Entry point - starts WebSocket server on localhost:8765
 - **[server/websocket_handler.py](server/websocket_handler.py)**: WebSocket handler - manages connections, routes messages, maintains one `BlackjackGame` instance per WebSocket connection in `active_games` dict
-- **[server/game/logic.py](server/game/logic.py)**: Core game logic in `BlackjackGame` class - manages deck, hands, scoring, game states (waiting/player_turn/dealer_turn/game_over)
+- **[server/game/logic.py](server/game/logic.py)**: Core game logic in `BlackjackGame` class - manages deck, hands, scoring, and game states (waiting/playing/dealer_turn/game_over)
 - **[server/game/cards.py](server/game/cards.py)**: Card and deck creation
 - **[server/game/hand.py](server/game/hand.py)**: Hand value calculation (handles Aces as 1 or 11)
-- **[server/utils.py](server/utils.py)**: Enums for GameStatus, GameResult, GameMessage
+- **[server/utils.py](server/utils.py)**: Enums for game state, results, actions, protocol messages, and user-facing game messages
 
 ### Frontend Structure
 
 - **[client/src/App.tsx](client/src/App.tsx)**: Main component - establishes WebSocket connection, handles messages, renders game UI
-- **[client/src/components/Hand.tsx](client/src/components/Hand.tsx)**: Displays a hand of cards with score
 - **[client/src/components/Card.tsx](client/src/components/Card.tsx)**: Displays individual card
-- **[client/src/interfaces/game_interfaces.ts](client/src/interfaces/game_interfaces.ts)**: TypeScript types for WebSocket messages (ServerMessage, ControlMessage, GameState, GameOverState)
+- **[client/src/interfaces/game_interfaces.ts](client/src/interfaces/game_interfaces.ts)**: TypeScript types for WebSocket state, action-result, error, and control messages
 
 ### Communication Protocol
 
@@ -68,10 +67,13 @@ npm run preview      # Preview production build
 
 ```json
 // During gameplay - dealer's hole card hidden
-{"type": "game_state", "player_hand": [...], "dealer_hand": [..., "Hidden"], "player_score": 18, "dealer_score": 10, "game_status": "player_turn", "message": "...", "result": null}
+{"type": "game_state", "players": [...], "dealer_hand": [..., "Hidden"], "dealer_score": 10, "game_status": "playing", "message": "..."}
 
 // Game over - all cards revealed
-{"type": "game_over", "player_hand": [...], "dealer_hand": [...], "player_score": 20, "dealer_score": 19, "game_status": "game_over", "result": "win", "message": "..."}
+{"type": "game_over", "players": [...], "dealer_hand": [...], "dealer_score": 19, "game_status": "game_over", "message": "..."}
+
+// Command result
+{"type": "action_result", "action": "hit", "accepted": true, "message": "Hit accepted."}
 
 // Errors
 {"type": "error", "message": "..."}
@@ -79,10 +81,10 @@ npm run preview      # Preview production build
 
 ### Key Implementation Details
 
-- **Dealer's Hidden Card**: During player's turn, `get_game_state_for_frontend()` sends dealer's first card and "Hidden" placeholder. On game over, `get_game_over_state_for_frontend()` reveals all dealer cards.
+- **Dealer's Hidden Card**: During player's turn, `get_game_state_for_frontend()` sends dealer's first card and "Hidden" placeholder. On game over, the same serializer reveals all dealer cards.
 - **Game Flow**: `deal_initial_hand()` → `player_hit()` (repeatable) → `player_stand()` → `dealer_turn()` (automatic, dealer hits until 17+) → game over
 - **State Management**: Each WebSocket connection gets its own `BlackjackGame` instance stored in `active_games` dict (keyed by websocket). Instance is deleted on disconnect.
-- **Immediate Blackjack**: If either player gets 21 on initial deal, game immediately transitions to game_over state with 1-second delay for dramatic effect.
+- **Immediate Blackjack**: If either player gets 21 on initial deal, game immediately transitions to game_over state.
 
 ## Tech Stack Notes
 

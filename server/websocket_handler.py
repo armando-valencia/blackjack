@@ -9,6 +9,19 @@ active_games = {}
 game_clients = {}  # Maps game_id to list of websockets
 
 
+async def send_action_result(websocket, action: str, accepted: bool, message: str):
+    await websocket.send(
+        json.dumps(
+            {
+                "type": ServerMessageType.ACTION_RESULT.value,
+                "action": action,
+                "accepted": accepted,
+                "message": message,
+            }
+        )
+    )
+
+
 async def broadcast_to_clients(game_id: str, message: dict):
     """Broadcast a message to all clients connected to a game"""
     if game_id in game_clients:
@@ -95,6 +108,12 @@ async def handler(websocket):
                         # Broadcast updated state to all clients
                         state = game.get_game_state_for_frontend()
                         await broadcast_to_clients(game_id, state)
+                        await send_action_result(
+                            websocket,
+                            message_type,
+                            True,
+                            "Player count updated.",
+                        )
 
                     elif message_type == ControlMessageType.DEAL_INITIAL.value:
                         game.deal_initial_hand()
@@ -103,6 +122,12 @@ async def handler(websocket):
                         # Broadcast initial deal to all clients
                         state = game.get_game_state_for_frontend()
                         await broadcast_to_clients(game_id, state)
+                        await send_action_result(
+                            websocket,
+                            message_type,
+                            True,
+                            "Hand dealt.",
+                        )
 
                         # If first player is a bot, process bot turns
                         if game.game_status == GameStatus.PLAYING.value:
@@ -124,6 +149,26 @@ async def handler(websocket):
                                 # If player's turn ended, process bot turns
                                 if game.game_status == GameStatus.PLAYING.value:
                                     await process_bot_turns(game, game_id)
+                                await send_action_result(
+                                    websocket,
+                                    message_type,
+                                    True,
+                                    "Hit accepted.",
+                                )
+                            else:
+                                await send_action_result(
+                                    websocket,
+                                    message_type,
+                                    False,
+                                    "It is not your turn.",
+                                )
+                        else:
+                            await send_action_result(
+                                websocket,
+                                message_type,
+                                False,
+                                "The game is not accepting actions.",
+                            )
 
                     elif message_type == ControlMessageType.STAND.value:
                         if game.game_status == GameStatus.PLAYING.value:
@@ -140,6 +185,26 @@ async def handler(websocket):
                                 # Process bot turns after human stands
                                 if game.game_status == GameStatus.PLAYING.value:
                                     await process_bot_turns(game, game_id)
+                                await send_action_result(
+                                    websocket,
+                                    message_type,
+                                    True,
+                                    "Stand accepted.",
+                                )
+                            else:
+                                await send_action_result(
+                                    websocket,
+                                    message_type,
+                                    False,
+                                    "It is not your turn.",
+                                )
+                        else:
+                            await send_action_result(
+                                websocket,
+                                message_type,
+                                False,
+                                "The game is not accepting actions.",
+                            )
 
             except json.JSONDecodeError:
                 print(f"Invalid JSON received: {message}")
