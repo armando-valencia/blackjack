@@ -1,12 +1,12 @@
 import asyncio
 import websockets
 import json
-from game.logic import BlackjackGame
-from command_validation import CommandValidationError, validate_command
-from utils import ControlMessageType, GameStatus, ServerMessageType
+from game.service import GameService
+from command_validation import CommandValidationError
+from utils import ServerMessageType
 
 # Store active games and their connected clients
-active_games = {}
+active_games: dict[str, GameService] = {}
 game_clients = {}  # Maps game_id to list of websockets
 
 
@@ -50,36 +50,19 @@ async def broadcast_to_clients(game_id: str, message: dict):
             game_clients[game_id].remove(client)
 
 
-async def process_bot_turns(game: BlackjackGame, game_id: str):
+async def process_bot_turns(game_service: GameService, game_id: str):
     """
     Process all consecutive bot turns automatically.
     Broadcasts state after each bot action.
     """
-    while game.game_status == GameStatus.PLAYING.value:
-        current_player = game.players[game.current_player_index]
-
-        # If current player is human, stop and wait for their input
-        if current_player.is_human:
-            break
-
-        # Process bot turn
+    while game_service.has_active_bot_turn():
         await asyncio.sleep(0.8)  # Small delay for visual clarity
-        bot_action = game.process_bot_turn()
+        bot_result = game_service.process_bot_turn()
 
-        if bot_action["action"] is None:
+        if bot_result is None:
             break
 
-        # Broadcast updated state after bot action
-        state = game.get_game_state_for_frontend()
-        await broadcast_to_clients(game_id, state)
-
-        # If bot's turn didn't end (they hit and didn't bust/reach 21), continue
-        if not bot_action["turn_ended"]:
-            # Bot will take another action
-            continue
-        else:
-            # Bot's turn ended, check if next player is also a bot
-            continue
+        await broadcast_to_clients(game_id, bot_result.state)
 
 
 async def handler(websocket):
@@ -91,16 +74,15 @@ async def handler(websocket):
     game_id = "default_game"
 
     if game_id not in active_games:
-        game = BlackjackGame()
-        active_games[game_id] = game
+        active_games[game_id] = GameService()
         game_clients[game_id] = []
 
-    game = active_games[game_id]
+    game_service = active_games[game_id]
     game_clients[game_id].append(websocket)
 
     try:
         # Send initial state
-        initial_state = game.get_game_state_for_frontend()
+        initial_state = game_service.get_state()
         await websocket.send(json.dumps(initial_state))
 
         # Process incoming messages
@@ -109,52 +91,15 @@ async def handler(websocket):
             try:
                 request = json.loads(message)
                 print(f"Parsed request: {request}")
-                message_type, requested_player_count = validate_command(game, request)
-
-                if message_type == ControlMessageType.SET_PLAYER_COUNT.value:
-                    game.initialize_players(requested_player_count)
-                    print(f"Initialized game with {requested_player_count} players")
-
-                    state = game.get_game_state_for_frontend()
-                    await broadcast_to_clients(game_id, state)
-                    await send_action_result(
-                        websocket,
-                        message_type,
-                        True,
-                        "Player count updated.",
-                    )
-
-                elif message_type == ControlMessageType.DEAL_INITIAL.value:
-                    game.deal_initial_hand()
-                    print(f"Game status after dealing: {game.game_status}")
-
-                    state = game.get_game_state_for_frontend()
-                    await broadcast_to_clients(game_id, state)
-                    await send_action_result(
-                        websocket,
-                        message_type,
-                        True,
-                        "Hand dealt.",
-                    )
-
-                    if game.game_status == GameStatus.PLAYING.value:
-                        await process_bot_turns(game, game_id)
-
-                elif message_type == ControlMessageType.HIT.value:
-                    game.player_hit()
-                    state = game.get_game_state_for_frontend()
-                    await broadcast_to_clients(game_id, state)
-                    if game.game_status == GameStatus.PLAYING.value:
-                        await process_bot_turns(game, game_id)
-                    await send_action_result(websocket, message_type, True, "Hit accepted.")
-
-                elif message_type == ControlMessageType.STAND.value:
-                    game.player_stand()
-                    state = game.get_game_state_for_frontend()
-                    await broadcast_to_clients(game_id, state)
-                    if game.game_status == GameStatus.PLAYING.value:
-                        await process_bot_turns(game, game_id)
-                    await send_action_result(websocket, message_type, True, "Stand accepted.")
+                command_result = game_service.execute_command(request)
+                await broadcast_to_clients(game_id, command_result.state)
+                await send_action_result(
+                    websocket,
+                    command_result.action,
+                    True,
+                    command_result.message,
+                )
+                await process_bot_turns(game_service, game_id)
 
             except json.JSONDecodeError:
                 print(f"Invalid JSON received: {message}")
