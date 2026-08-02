@@ -10,7 +10,7 @@ interface PlayerCardProps {
 }
 
 const PLAYER_BASE_CLASSES =
-	"bg-table-surface-raised/30 backdrop-blur-sm border-2 border-table-border/30 rounded-xl transition-all duration-300";
+	"min-w-0 bg-table-surface-raised/30 backdrop-blur-sm border-2 border-table-border/30 rounded-xl transition-all duration-300";
 const PLAYER_STATUS_CLASSES: Record<PlayerStatus, string> = {
 	[PLAYER_STATUS.WAITING]: "text-table-muted",
 	[PLAYER_STATUS.PLAYING]: "text-table-muted",
@@ -94,7 +94,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant 
 				: `${player.name} ${PLAYER_RESULT_SUMMARY_LABELS[player.result].bot}`
 		: "";
 	const turnIndicator = isCurrentTurn ? (
-		<span className="bg-table-surface/60 text-table-text inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium">
+		<span className="bg-table-surface/60 text-table-text inline-flex shrink-0 items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium">
 			<span aria-hidden="true">●</span>
 			{turnLabel}
 		</span>
@@ -102,21 +102,24 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant 
 
 	if (variant === "compact") {
 		return (
-			<div className={`${PLAYER_BASE_CLASSES} p-3 ${getBorderClass()}`}>
-				<div className="flex items-center justify-between">
-					<div className="flex items-center gap-2">
-						<span className={`text-sm font-medium ${nameClass}`}>{player.name}</span>
+			<div className={`${PLAYER_BASE_CLASSES} p-3 sm:p-4 ${getBorderClass()}`}>
+				<div className="flex flex-wrap items-center justify-between gap-3">
+					<div className="min-w-0 flex flex-1 items-center gap-2">
+						<span className={`truncate text-sm font-medium ${nameClass}`}>{player.name}</span>
 						<span className="text-table-subtle text-xs">({roleLabel})</span>
 					</div>
-					<div className="flex items-center gap-3">
+					<div className="flex flex-wrap items-center justify-end gap-2">
 						<span className="text-table-muted text-sm">{player.hand.length} cards</span>
-						<div className="bg-table-surface/60 border border-table-border/50 px-2 py-1 rounded">
-							<span className="text-table-text font-bold text-sm">{player.score}</span>
+						<div className="bg-table-surface/60 border border-table-border/50 rounded px-2 py-1">
+							<span className="text-table-subtle text-[0.6rem] uppercase tracking-wider mr-1">Score</span>
+							<span className="text-table-text font-bold text-sm" aria-label={`Score ${player.score}`}>{player.score}</span>
 						</div>
+					</div>
+				</div>
+				<div className="mt-2 flex flex-wrap items-center gap-2">
 						{turnIndicator}
 						{getStatusText() && !player.result && <span className={`text-xs font-medium ${getStatusClass()}`}>{getStatusText()}</span>}
 						{resultLabel && <span className={`text-xs font-medium ${getStatusClass()}`}>{resultLabel}</span>}
-					</div>
 				</div>
 			</div>
 		);
@@ -124,9 +127,9 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant 
 
 	return (
 		<div className={`${PLAYER_BASE_CLASSES} p-4 md:p-6 ${getBorderClass()}`}>
-			<div className="flex items-center justify-between mb-4">
-				<div className="flex items-center gap-2">
-					<h3 className={`text-base md:text-lg font-medium ${nameClass}`}>{player.name}</h3>
+			<div className="flex items-start justify-between gap-3 mb-4">
+				<div className="min-w-0 flex flex-wrap items-center gap-2">
+					<h3 className={`truncate text-base md:text-lg font-medium ${nameClass}`}>{player.name}</h3>
 					<span className="text-table-subtle text-xs">({roleLabel})</span>
 					{turnIndicator}
 					{isCurrentTurn && getStatusText() && (
@@ -135,7 +138,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant 
 						</span>
 					)}
 				</div>
-				<div className={`bg-table-surface/60 border border-table-border/50 px-3 py-1 rounded-md ${player.is_human ? "bg-table-active/10 border-table-active/30" : ""}`}>
+				<div className={`shrink-0 bg-table-surface/60 border border-table-border/50 px-3 py-1 rounded-md ${player.is_human ? "bg-table-active/10 border-table-active/30" : ""}`}>
 					<span className={`${scoreClass} font-bold`}>{player.score}</span>
 				</div>
 			</div>

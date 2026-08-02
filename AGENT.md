@@ -65,9 +65,9 @@ Use `scripts/sync-main.sh` and `scripts/start-feature.sh` for this workflow when
 
 ## Roadmap status
 
-- Completed: S1, S1.5, S1.6, S2, S3, S4, S5, S6, S7, T1, T2, T3, T4, T5, T6, and M1.
-- In progress: M2 — Responsive Cards.
-- Pending: M3, M4, and M5.
+- Completed: S1, S1.5, S1.6, S2, S3, S4, S5, S6, S7, T1, T2, T3, T4, T5, T6, M1, and M2.
+- In progress: M3 — Mobile Player Summaries.
+- Pending: M4 and M5.
 - Update this snapshot after each merge before starting the next branch.
 
 ## Local-file rule
