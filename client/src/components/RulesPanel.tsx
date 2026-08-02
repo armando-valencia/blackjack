@@ -25,12 +25,12 @@ const RulesPanel: React.FC<RulesPanelProps> = ({ stats, onResetStats }) => {
 		<section className="mt-4 bg-table-surface/40 backdrop-blur-xl border border-table-border/30 rounded-2xl overflow-hidden">
 			<details>
 				<summary className="cursor-pointer list-none px-4 py-3 md:px-5 md:py-4 text-table-text font-medium focus-visible:outline-table-focus">
-					<div className="flex flex-wrap items-center justify-between gap-2">
+					<span className="flex flex-wrap items-center justify-between gap-2">
 						<span>Rules and session</span>
 						<span className="text-table-muted text-sm font-normal">
 							{stats.handsPlayed} {stats.handsPlayed === 1 ? "hand" : "hands"} played
 						</span>
-					</div>
+					</span>
 				</summary>
 
 				<div className="border-t border-table-border/30 px-4 py-4 md:px-5 md:py-5">

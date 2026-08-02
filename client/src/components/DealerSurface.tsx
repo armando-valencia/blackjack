@@ -69,7 +69,7 @@ const DealerSurface: React.FC<DealerSurfaceProps> = ({ dealerHand, dealerScore, 
 				</div>
 			</div>
 
-			<p className={`mt-3 text-center text-sm ${DEALER_PHASE_CLASSES[gameStatus]}`} aria-live={isDealerTurn ? "polite" : "off"}>
+			<p className={`mt-3 text-center text-sm ${DEALER_PHASE_CLASSES[gameStatus]}`} role="status" aria-live={isDealerTurn ? "polite" : "off"}>
 				{DEALER_PHASE_MESSAGES[gameStatus]}
 			</p>
 		</section>

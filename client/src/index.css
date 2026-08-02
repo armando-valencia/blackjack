@@ -30,7 +30,8 @@
 	}
 
 	button:focus-visible,
-	a:focus-visible {
+	a:focus-visible,
+	summary:focus-visible {
 		outline: 3px solid var(--color-table-focus);
 		outline-offset: 3px;
 	}
