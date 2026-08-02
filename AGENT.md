@@ -10,11 +10,14 @@ This file is local project guidance for Codex and must remain untracked. It is n
 - Choose the simplest implementation that fully satisfies the requirements.
 - Make architectural decisions for the long term; do not introduce stopgaps intended to be replaced later.
 - Prefer a small, complete design over a narrow patch that creates avoidable follow-up work.
+- When repeated domain values appear, model them as named domain types or constants in the owning module rather than duplicating magic strings in tests and production code.
+- Keep test helpers close to the domain they exercise; do not hide production concepts behind test-only replacement constants.
 - Preserve unrelated user changes.
 - Prefer well-named code over comments. Add comments only when naming cannot express the intent.
 - Do not use one-letter variables or ambiguous function names.
 - Python test names must follow `test__<function name>__<test case>`.
 - Run only the checks relevant to the current PR, then report results and a suggested commit message.
+- Every completed feature handoff must include a suggested commit message that is one sentence maximum.
 
 ## Planning workflow
 
@@ -24,7 +27,18 @@ This file is local project guidance for Codex and must remain untracked. It is n
 4. Create the item’s branch if it does not exist.
 5. Implement only the selected item.
 6. Validate the item and inspect the final diff.
-7. Hand off changed files, checks, known limitations, and a suggested commit message.
+7. Hand off changed files, checks, known limitations, and a one-sentence suggested commit message.
+
+## Post-merge workflow
+
+After a PR is merged:
+
+1. Switch to `main`.
+2. Pull the merged changes from the remote.
+3. Confirm the working tree and branch are synchronized.
+4. Create the next feature branch from the updated `main`.
+
+Do not continue feature work from a stale branch after its PR has been merged.
 
 ## Roadmap locations
 

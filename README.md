@@ -88,6 +88,14 @@ With both the client and server running, open a web browser and go to `http://lo
 
 > After running `npm run dev`, you should see a message in the terminal indicating the app is running with a local URL (should be `http://localhost:5173`). You can click on this link or copy and paste it into your web browser to view the app.
 
+### Run Python tests
+
+From the project root, activate the virtual environment and run:
+
+```bash
+pytest server/tests
+```
+
 ## Features to add
 
 - Improve UI/UX with better styling and animations
