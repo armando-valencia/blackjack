@@ -10,6 +10,7 @@ This file is local project guidance for Codex and must remain untracked. It is n
 - Choose the simplest implementation that fully satisfies the requirements.
 - Make architectural decisions for the long term; do not introduce stopgaps intended to be replaced later.
 - Prefer a small, complete design over a narrow patch that creates avoidable follow-up work.
+- Use dataclasses for simple data containers when they improve clarity; use regular classes for objects with meaningful behavior or complex initialization.
 - When repeated domain values appear, model them as named domain types or constants in the owning module rather than duplicating magic strings in tests and production code.
 - Keep test helpers close to the domain they exercise; do not hide production concepts behind test-only replacement constants.
 - Before closing stabilization, audit the repository for repeated domain and protocol magic strings and address them in a dedicated or feature-related change.
