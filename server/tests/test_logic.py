@@ -3,7 +3,7 @@ import pytest
 from game.cards import Card, Rank, Suit
 from game.logic import BlackjackGame
 from game.player import PlayerStatus
-from utils import GameResult
+from utils import GameResult, GameStatus
 
 
 def create_game_with_human_player() -> BlackjackGame:
@@ -47,7 +47,7 @@ def test__deal_initial_hand__deals_two_cards_and_starts_first_active_turn(monkey
 
     assert [str(card) for card in game.players[0].hand] == ["6H", "10S"]
     assert [str(card) for card in game.dealer_hand] == ["7C", "9D"]
-    assert game.game_status == "playing"
+    assert game.game_status == GameStatus.PLAYING.value
     assert game.current_player_index == 0
     assert game.players[0].status == PlayerStatus.PLAYING.value
 
@@ -59,7 +59,7 @@ def test__player_hit__marks_player_bust_and_resolves_round():
     player.add_card(Card(Rank.EIGHT, Suit.SPADES))
     player.status = PlayerStatus.PLAYING.value
     game.dealer_score = 17
-    game.game_status = "playing"
+    game.game_status = GameStatus.PLAYING.value
     game.current_player_index = 0
     game.deck = [Card(Rank.FIVE, Suit.DIAMONDS)]
 
@@ -69,7 +69,7 @@ def test__player_hit__marks_player_bust_and_resolves_round():
     assert player.score == 23
     assert player.status == PlayerStatus.DONE.value
     assert player.result == GameResult.LOSE.value
-    assert game.game_status == "game_over"
+    assert game.game_status == GameStatus.GAME_OVER.value
 
 
 def test__player_hit__stands_at_twenty_one_and_resolves_round():
@@ -80,7 +80,7 @@ def test__player_hit__stands_at_twenty_one_and_resolves_round():
     player.status = PlayerStatus.PLAYING.value
     game.dealer_hand = [Card(Rank.TEN, Suit.DIAMONDS), Card(Rank.SEVEN, Suit.CLUBS)]
     game.dealer_score = 17
-    game.game_status = "playing"
+    game.game_status = GameStatus.PLAYING.value
     game.current_player_index = 0
     game.deck = [Card(Rank.FIVE, Suit.DIAMONDS)]
 
@@ -90,7 +90,7 @@ def test__player_hit__stands_at_twenty_one_and_resolves_round():
     assert player.score == 21
     assert player.status == PlayerStatus.DONE.value
     assert player.result == GameResult.WIN.value
-    assert game.game_status == "game_over"
+    assert game.game_status == GameStatus.GAME_OVER.value
 
 
 def test__player_stand__ends_turn_and_dealer_resolves_hand():
@@ -101,7 +101,7 @@ def test__player_stand__ends_turn_and_dealer_resolves_hand():
     player.status = PlayerStatus.PLAYING.value
     game.dealer_hand = [Card(Rank.TEN, Suit.DIAMONDS), Card(Rank.SEVEN, Suit.CLUBS)]
     game.dealer_score = 17
-    game.game_status = "playing"
+    game.game_status = GameStatus.PLAYING.value
     game.current_player_index = 0
 
     game.player_stand()
@@ -109,7 +109,7 @@ def test__player_stand__ends_turn_and_dealer_resolves_hand():
     assert player.status == PlayerStatus.DONE.value
     assert player.result == GameResult.WIN.value
     assert game.dealer_score == 17
-    assert game.game_status == "game_over"
+    assert game.game_status == GameStatus.GAME_OVER.value
 
 
 @pytest.mark.parametrize(
@@ -132,13 +132,13 @@ def test__dealer_turn__resolves_player_against_dealer(
         Card(Rank.TEN, Suit.CLUBS),
     ]
     game.dealer_score = dealer_score
-    game.game_status = "dealer_turn"
+    game.game_status = GameStatus.DEALER_TURN.value
 
     game.dealer_turn()
 
     assert player.result == expected_result
     assert player.status == PlayerStatus.DONE.value
-    assert game.game_status == "game_over"
+    assert game.game_status == GameStatus.GAME_OVER.value
 
 
 def test__dealer_turn__awards_wins_when_dealer_busts():
@@ -152,7 +152,7 @@ def test__dealer_turn__awards_wins_when_dealer_busts():
         Card(Rank.FIVE, Suit.HEARTS),
     ]
     game.dealer_score = 23
-    game.game_status = "dealer_turn"
+    game.game_status = GameStatus.DEALER_TURN.value
 
     game.dealer_turn()
 
@@ -167,6 +167,6 @@ def test__handle_deck_exhaustion__ends_round_as_push():
 
     game.handle_deck_exhaustion()
 
-    assert game.game_status == "game_over"
+    assert game.game_status == GameStatus.GAME_OVER.value
     assert player.status == PlayerStatus.DONE.value
     assert player.result == GameResult.PUSH.value

@@ -2,7 +2,7 @@ from game.cards import Card, Rank, create_deck
 from game.hand import calculate_hand_value
 from game.player import PlayerState, PlayerStatus
 from game.bot_player import get_random_bot_name, make_bot_decision
-from utils import GameStatus, GameResult, GameMessage, HIDDEN_CARD
+from utils import GameStatus, GameResult, GameMessage, HIDDEN_CARD, PlayerAction, ServerMessageType
 
 
 class BlackjackGame:
@@ -117,7 +117,7 @@ class BlackjackGame:
             self.game_status = GameStatus.GAME_OVER.value
             self.message = "All players have Blackjack!"
         else:
-            self.game_status = "playing"
+            self.game_status = GameStatus.PLAYING.value
             # Find first player who needs to play
             self.current_player_index = self._find_next_active_player(start_index=-1)
             if self.current_player_index != -1:
@@ -154,7 +154,7 @@ class BlackjackGame:
         Player hits (draws a card).
         Returns True if this action ended the player's turn (bust or 21).
         """
-        if self.game_status != "playing":
+        if self.game_status != GameStatus.PLAYING.value:
             return False
 
         # Default to current player if no player_id specified
@@ -195,7 +195,7 @@ class BlackjackGame:
 
     def player_stand(self, player_id: int | None = None):
         """Player stands (ends their turn)"""
-        if self.game_status != "playing":
+        if self.game_status != GameStatus.PLAYING.value:
             return
 
         # Default to current player if no player_id specified
@@ -219,7 +219,7 @@ class BlackjackGame:
         Process the current bot player's turn.
         Returns action taken ("hit" or "stand") and whether turn ended.
         """
-        if self.game_status != "playing":
+        if self.game_status != GameStatus.PLAYING.value:
             return {"action": None, "turn_ended": False}
 
         current_player = self.players[self.current_player_index]
@@ -233,12 +233,12 @@ class BlackjackGame:
         # Bot makes decision
         action = make_bot_decision(current_player.score, dealer_upcard_value)
 
-        if action == "hit":
+        if action == PlayerAction.HIT.value:
             turn_ended = self.player_hit(self.current_player_index)
-            return {"action": "hit", "turn_ended": turn_ended}
+            return {"action": PlayerAction.HIT.value, "turn_ended": turn_ended}
         else:  # stand
             self.player_stand(self.current_player_index)
-            return {"action": "stand", "turn_ended": True}
+            return {"action": PlayerAction.STAND.value, "turn_ended": True}
 
     def dealer_turn(self):
         """Dealer plays their hand"""
@@ -321,7 +321,11 @@ class BlackjackGame:
             dealer_score_for_frontend = calculate_hand_value([self.dealer_hand[0]]) if self.dealer_hand else 0
 
         return {
-            "type": "game_state" if self.game_status != GameStatus.GAME_OVER.value else "game_over",
+            "type": (
+                ServerMessageType.GAME_STATE.value
+                if self.game_status != GameStatus.GAME_OVER.value
+                else ServerMessageType.GAME_OVER.value
+            ),
             "players": [player.to_dict() for player in self.players],
             "dealer_hand": dealer_hand_for_frontend,
             "dealer_score": dealer_score_for_frontend,

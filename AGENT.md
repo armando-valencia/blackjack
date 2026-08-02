@@ -20,6 +20,7 @@ This file is local project guidance for Codex and must remain untracked. It is n
 - Python test names must follow `test__<function name>__<test case>`.
 - Run only the checks relevant to the current PR, then report results and a suggested commit message.
 - Every completed feature handoff must include a suggested commit message that is one sentence maximum.
+- Suggested commit messages should sound natural and human-written, describe the actual change, and avoid generic or overly formal bot-like phrasing.
 
 ## Planning workflow
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { HIDDEN_CARD } from "../constants";
+import { CARD_SUITS, HIDDEN_CARD } from "../constants";
 import { colors } from "../theme";
 
 interface CardProps {
@@ -15,10 +15,10 @@ interface CardValue {
 }
 
 const suitMapper: { [key: string]: { symbol: string; isRed: boolean } } = {
-	H: { symbol: "♥", isRed: true },
-	D: { symbol: "♦", isRed: true },
-	C: { symbol: "♣", isRed: false },
-	S: { symbol: "♠", isRed: false },
+	[CARD_SUITS.HEARTS]: { symbol: "♥", isRed: true },
+	[CARD_SUITS.DIAMONDS]: { symbol: "♦", isRed: true },
+	[CARD_SUITS.CLUBS]: { symbol: "♣", isRed: false },
+	[CARD_SUITS.SPADES]: { symbol: "♠", isRed: false },
 };
 
 const getCardValue = (card: string): CardValue => {
