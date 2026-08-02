@@ -4,10 +4,14 @@ import ConnectionStatus from "./components/ConnectionStatus";
 import ErrorToast from "./components/ErrorToast";
 import GameBoard from "./components/GameBoard";
 import PlayerSelect from "./components/PlayerSelect";
+import RulesPanel from "./components/RulesPanel";
+import { useSessionStats } from "./hooks/useSessionStats";
 import { CONTROL_MESSAGE_TYPE, GAME_STATUS } from "./constants";
 
 function App() {
 	const { game, connectionStatus, errorMessage, isActionPending, sendControlMessage } = useWebSocket("ws://localhost:8765");
+	const humanPlayer = game?.players.find((player) => player.is_human);
+	const { stats, resetStats } = useSessionStats(game?.game_status ?? null, humanPlayer?.result ?? null);
 
 	const handlePlayerCountSelect = (count: number) => {
 		sendControlMessage(CONTROL_MESSAGE_TYPE.SET_PLAYER_COUNT, count);
@@ -44,6 +48,8 @@ function App() {
 						isActionPending={isActionPending}
 					/>
 				)}
+
+				<RulesPanel stats={stats} onResetStats={resetStats} />
 
 				{!game && (
 					<div className="flex justify-center">
