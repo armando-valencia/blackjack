@@ -1,120 +1,102 @@
 # Blackjack
 
-A local multiplayer Blackjack game with a React frontend and Python WebSocket backend. A human player can play against the dealer with configurable bot players.
+A local multiplayer Blackjack game with a React frontend and Python WebSocket backend.
 
-## Project Structure
+## Quick Start
 
-- `client/`: Contains the React frontend (Vite)
-- `server/`: Contains the Python backend
+### Prerequisites
 
-## Setup and Running
+- Python 3.12 or newer
+- Node.js 18 or newer
 
-### Python (Server)
+Run the following from the repository root.
 
-1.  **Navigate to the root directory of the project:**
-
-    ```bash
-    cd blackjack/
-    ```
-
-2.  **Create a virtual environment:**
-
-    ```bash
-    python -m venv .venv
-    ```
-
-    This creates a folder named `.venv` at the root of your project
-
-3.  **Activate the virtual environment:**
-
-    - **On macOS and Linux:**
-      ```bash
-      source .venv/bin/activate
-      ```
-    - **On Windows:**
-      ```bash
-      .\.venv\Scripts\activate
-      ```
-      You should see `(.venv)` at the beginning of your terminal, indicating the virtual environment is active
-
-4.  **Install Python dependencies:**
-    With the virtual environment activated, run the following command to install the packages listed in `server/requirements.txt`:
-
-    ```bash
-    pip install -r server/requirements.txt
-    ```
-
-5.  **Run the Python server:**
-    With the virtual environment activated, run the `main.py` script:
-
-    ```bash
-    python server/main.py  # (python3 server/main.py on mac)
-    ```
-
-    > Press `Ctrl+C` to stop the server if needed
-
-6.  **Deactivate the virtual environment:**
-    When you are finished working on the backend, you can deactivate the virtual environment by running:
-    ```bash
-    deactivate
-    ```
-    The `(.venv)` will disappear from your prompt.
-
-### React (Client)
-
-1.  **Navigate to the client directory:**
-
-    ```bash
-    cd blackjack/client
-    ```
-
-2.  **Install client dependencies:**
-    Run the following to install the packages in `package.json`:
-
-    ```bash
-    npm install
-    ```
-
-3.  **Run the React app:**
-    Run the following command to start the development server:
-
-    ```bash
-    npm run dev
-    ```
-
-### **Open the app in your browser:**
-
-With both the client and server running, open a web browser and go to `http://localhost:5173` to see the app in action.
-
-> After running `npm run dev`, you should see a message in the terminal indicating the app is running with a local URL (should be `http://localhost:5173`). You can click on this link or copy and paste it into your web browser to view the app.
-
-### Run Python tests
-
-From the project root, activate the virtual environment and run:
+### 1. Install dependencies
 
 ```bash
-pytest server/tests
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r server/requirements.txt
+npm ci --prefix client
 ```
 
-### Run all quality checks
+On Windows PowerShell, activate the environment with `.\.venv\Scripts\activate` instead.
 
-From the project root, activate the virtual environment and run:
+### 2. Start the server
+
+In the first terminal:
+
+```bash
+python server/main.py
+```
+
+The WebSocket server listens on `ws://localhost:8765`.
+
+### 3. Start the client
+
+In a second terminal, from the repository root:
+
+```bash
+npm --prefix client run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+## Project Layout
+
+| Path | Purpose |
+| --- | --- |
+| `client/` | React and Vite frontend. |
+| `server/` | Python game rules and WebSocket backend. |
+| `server/tests/` | Python rule and service tests. |
+| `scripts/` | Local verification and Git workflow helpers. |
+
+## Development Commands
+
+Run all local quality checks from the repository root:
 
 ```bash
 ./scripts/verify.sh
 ```
 
-This runs the Python test suite and the client lint and production build checks.
+This runs the Python test suite, client lint, Vitest tests, and production build.
 
-### Git workflow helpers
+Run the Python tests directly:
 
-After a PR is merged, sync the local base branch with:
+```bash
+python -m pytest server/tests
+```
+
+Run client checks directly:
+
+```bash
+npm --prefix client run check
+```
+
+Run client tests in watch mode:
+
+```bash
+npm --prefix client run test:watch
+```
+
+## Architecture
+
+The Python server owns the game session, Blackjack rules, player turns, and WebSocket messages. The React client renders the table, sends player actions, and handles connection recovery.
+
+The local development endpoints are:
+
+- Client: `http://localhost:5173`
+- Server: `ws://localhost:8765`
+
+## Git Workflow Helpers
+
+After a pull request is merged, synchronize the local base branch:
 
 ```bash
 ./scripts/sync-main.sh
 ```
 
-Start the next feature branch from the updated base with:
+Start the next branch from the updated `main` branch:
 
 ```bash
 ./scripts/start-feature.sh feature/example-name
@@ -122,9 +104,9 @@ Start the next feature branch from the updated base with:
 
 These helpers refuse tracked changes and never commit, push, stash, reset, or delete files.
 
-## Current scope
+## Current Scope
 
 - Local multiplayer sessions with one human player and optional bots.
 - Dealer and player turn handling over WebSockets.
 - Responsive React client with reconnect handling.
-- Python rule tests and client quality checks.
+- Python and client test suites with GitHub Actions verification.
