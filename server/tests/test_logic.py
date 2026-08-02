@@ -1,6 +1,6 @@
 import pytest
 
-from game.cards import Card
+from game.cards import Card, Rank, Suit
 from game.logic import BlackjackGame
 from game.player import PlayerStatus
 from utils import GameResult
@@ -15,9 +15,16 @@ def create_game_with_human_player() -> BlackjackGame:
 @pytest.mark.parametrize(
     ("cards", "expected_result"),
     [
-        ([Card("A", "H"), Card("K", "S")], True),
-        ([Card("A", "H"), Card("9", "S")], False),
-        ([Card("10", "H"), Card("A", "S"), Card("2", "D")], False),
+        ([Card(Rank.ACE, Suit.HEARTS), Card(Rank.KING, Suit.SPADES)], True),
+        ([Card(Rank.ACE, Suit.HEARTS), Card(Rank.NINE, Suit.SPADES)], False),
+        (
+            [
+                Card(Rank.TEN, Suit.HEARTS),
+                Card(Rank.ACE, Suit.SPADES),
+                Card(Rank.TWO, Suit.DIAMONDS),
+            ],
+            False,
+        ),
     ],
 )
 def test__is_blackjack__identifies_initial_blackjack_only(cards, expected_result):
@@ -29,10 +36,10 @@ def test__is_blackjack__identifies_initial_blackjack_only(cards, expected_result
 def test__deal_initial_hand__deals_two_cards_and_starts_first_active_turn(monkeypatch):
     game = create_game_with_human_player()
     ordered_deck = [
-        Card("9", "D"),
-        Card("7", "C"),
-        Card("10", "S"),
-        Card("6", "H"),
+        Card(Rank.NINE, Suit.DIAMONDS),
+        Card(Rank.SEVEN, Suit.CLUBS),
+        Card(Rank.TEN, Suit.SPADES),
+        Card(Rank.SIX, Suit.HEARTS),
     ]
     monkeypatch.setattr("game.logic.create_deck", lambda: ordered_deck.copy())
 
@@ -48,13 +55,13 @@ def test__deal_initial_hand__deals_two_cards_and_starts_first_active_turn(monkey
 def test__player_hit__marks_player_bust_and_resolves_round():
     game = create_game_with_human_player()
     player = game.players[0]
-    player.add_card(Card("10", "H"))
-    player.add_card(Card("8", "S"))
+    player.add_card(Card(Rank.TEN, Suit.HEARTS))
+    player.add_card(Card(Rank.EIGHT, Suit.SPADES))
     player.status = PlayerStatus.PLAYING.value
     game.dealer_score = 17
     game.game_status = "playing"
     game.current_player_index = 0
-    game.deck = [Card("5", "D")]
+    game.deck = [Card(Rank.FIVE, Suit.DIAMONDS)]
 
     turn_ended = game.player_hit()
 
@@ -68,14 +75,14 @@ def test__player_hit__marks_player_bust_and_resolves_round():
 def test__player_hit__stands_at_twenty_one_and_resolves_round():
     game = create_game_with_human_player()
     player = game.players[0]
-    player.add_card(Card("10", "H"))
-    player.add_card(Card("6", "S"))
+    player.add_card(Card(Rank.TEN, Suit.HEARTS))
+    player.add_card(Card(Rank.SIX, Suit.SPADES))
     player.status = PlayerStatus.PLAYING.value
-    game.dealer_hand = [Card("10", "D"), Card("7", "C")]
+    game.dealer_hand = [Card(Rank.TEN, Suit.DIAMONDS), Card(Rank.SEVEN, Suit.CLUBS)]
     game.dealer_score = 17
     game.game_status = "playing"
     game.current_player_index = 0
-    game.deck = [Card("5", "D")]
+    game.deck = [Card(Rank.FIVE, Suit.DIAMONDS)]
 
     turn_ended = game.player_hit()
 
@@ -89,10 +96,10 @@ def test__player_hit__stands_at_twenty_one_and_resolves_round():
 def test__player_stand__ends_turn_and_dealer_resolves_hand():
     game = create_game_with_human_player()
     player = game.players[0]
-    player.add_card(Card("10", "H"))
-    player.add_card(Card("8", "S"))
+    player.add_card(Card(Rank.TEN, Suit.HEARTS))
+    player.add_card(Card(Rank.EIGHT, Suit.SPADES))
     player.status = PlayerStatus.PLAYING.value
-    game.dealer_hand = [Card("10", "D"), Card("7", "C")]
+    game.dealer_hand = [Card(Rank.TEN, Suit.DIAMONDS), Card(Rank.SEVEN, Suit.CLUBS)]
     game.dealer_score = 17
     game.game_status = "playing"
     game.current_player_index = 0
@@ -118,9 +125,12 @@ def test__dealer_turn__resolves_player_against_dealer(
 ):
     game = create_game_with_human_player()
     player = game.players[0]
-    player.add_card(Card(str(player_score - 10), "H"))
-    player.add_card(Card("10", "S"))
-    game.dealer_hand = [Card(str(dealer_score - 10), "D"), Card("10", "C")]
+    player.add_card(Card(Rank(str(player_score - 10)), Suit.HEARTS))
+    player.add_card(Card(Rank.TEN, Suit.SPADES))
+    game.dealer_hand = [
+        Card(Rank(str(dealer_score - 10)), Suit.DIAMONDS),
+        Card(Rank.TEN, Suit.CLUBS),
+    ]
     game.dealer_score = dealer_score
     game.game_status = "dealer_turn"
 
@@ -134,9 +144,13 @@ def test__dealer_turn__resolves_player_against_dealer(
 def test__dealer_turn__awards_wins_when_dealer_busts():
     game = create_game_with_human_player()
     player = game.players[0]
-    player.add_card(Card("10", "H"))
-    player.add_card(Card("8", "S"))
-    game.dealer_hand = [Card("10", "D"), Card("8", "C"), Card("5", "H")]
+    player.add_card(Card(Rank.TEN, Suit.HEARTS))
+    player.add_card(Card(Rank.EIGHT, Suit.SPADES))
+    game.dealer_hand = [
+        Card(Rank.TEN, Suit.DIAMONDS),
+        Card(Rank.EIGHT, Suit.CLUBS),
+        Card(Rank.FIVE, Suit.HEARTS),
+    ]
     game.dealer_score = 23
     game.game_status = "dealer_turn"
 
