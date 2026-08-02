@@ -23,7 +23,7 @@ const GameMessage: React.FC<GameMessageProps> = ({ message, gameStatus, result }
 	};
 
 	return (
-		<div className="text-center">
+		<div className="text-center" role="status" aria-live="polite">
 			<p className={`text-lg md:text-xl font-semibold ${getMessageClass()}`}>
 				{message}
 			</p>

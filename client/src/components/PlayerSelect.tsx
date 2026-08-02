@@ -21,6 +21,7 @@ const PlayerSelect: React.FC<PlayerSelectProps> = ({ onSelectPlayerCount }) => {
 				<div className="grid grid-cols-2 gap-3 sm:gap-4">
 					{playerOptions.map(({ count, label, description }) => (
 						<button
+							type="button"
 							key={count}
 							onClick={() => onSelectPlayerCount(count)}
 							className="group relative bg-table-surface-raised/50 hover:bg-slate-700/50 border-2 border-table-border/50 hover:border-emerald-500/50 rounded-xl p-4 sm:p-6 transition-all duration-200 hover:scale-105"
