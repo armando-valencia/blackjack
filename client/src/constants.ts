@@ -37,6 +37,7 @@ export const CONTROL_MESSAGE_TYPE = {
 
 export const CONNECTION_STATUS = {
 	CONNECTING: "connecting",
+	RECONNECTING: "reconnecting",
 	CONNECTED: "connected",
 	DISCONNECTED: "disconnected",
 	ERROR: "error",

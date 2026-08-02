@@ -13,7 +13,12 @@ const ConnectionStatus: React.FC<ConnectionStatusProps> = ({ status, hasError })
 			color: "bg-yellow-400",
 			text: "Connecting...",
 			pulse: true,
-		},
+	},
+	[CONNECTION_STATUS.RECONNECTING]: {
+		color: "bg-yellow-400",
+		text: "Reconnecting...",
+		pulse: true,
+	},
 	[CONNECTION_STATUS.CONNECTED]: {
 			color: "bg-emerald-400",
 			text: "Connected",

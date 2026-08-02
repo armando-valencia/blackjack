@@ -7,6 +7,7 @@ interface ButtonProps {
 	children: React.ReactNode;
 	variant?: ButtonVariant;
 	className?: string;
+	disabled?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -14,6 +15,7 @@ const Button: React.FC<ButtonProps> = ({
 	children,
 	variant = BUTTON_VARIANT.DEAL,
 	className = "",
+	disabled = false,
 }) => {
 	const baseStyles = `
 		px-8 py-3 md:px-10 md:py-4
@@ -28,6 +30,7 @@ const Button: React.FC<ButtonProps> = ({
 		hover:-translate-y-0.5
 		relative
 		min-w-[140px] md:min-w-[160px]
+		disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
 	`;
 
 	const variantStyles = {
@@ -37,7 +40,12 @@ const Button: React.FC<ButtonProps> = ({
 	};
 
 	return (
-		<button onClick={onClick} className={`${baseStyles} ${variantStyles[variant]} ${className}`}>
+		<button
+			onClick={onClick}
+			disabled={disabled}
+			aria-busy={disabled}
+			className={`${baseStyles} ${variantStyles[variant]} ${className}`}
+		>
 			<div className="absolute inset-0 rounded-lg bg-gradient-to-t from-black/10 to-transparent pointer-events-none" />
 			<span className="relative z-10">{children}</span>
 		</button>
