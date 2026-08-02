@@ -1,7 +1,7 @@
 import React from "react";
 import DealerSurface from "./DealerSurface";
 import GameMessage from "./GameMessage";
-import GameControls from "./GameControls";
+import ActionRail from "./ActionRail";
 import PlayerCard from "./PlayerCard";
 import { GAME_STATUS } from "../constants";
 import type { MultiplayerGameState } from "../interfaces/game_interfaces";
@@ -62,20 +62,21 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onHit, onStand, isA
 						</div>
 					)}
 
-					<div className="flex justify-center">
-						<div className="w-full max-w-md">
-							<GameControls
-								gameStatus={game.game_status}
-								onDeal={onDeal}
-								onHit={onHit}
-								onStand={onStand}
-								isHumanTurn={isHumanTurn || false}
-								isActionPending={isActionPending}
-							/>
-						</div>
-					</div>
-				</div>
 			</div>
+
+			<ActionRail
+				gameStatus={game.game_status}
+				dealerScore={game.dealer_score}
+				playerScore={humanPlayer?.score ?? null}
+				playerResult={humanPlayer?.result ?? null}
+				currentPlayerName={game.players.find((player) => player.player_id === game.current_player_index)?.name ?? null}
+				onDeal={onDeal}
+				onHit={onHit}
+				onStand={onStand}
+				isHumanTurn={isHumanTurn || false}
+				isActionPending={isActionPending}
+			/>
+		</div>
 		</div>
 	);
 };
