@@ -4,8 +4,8 @@ This file is local project guidance for Codex and must remain untracked. It is n
 
 ## Working rules
 
-- Work on one roadmap item at a time.
-- Create one branch per roadmap item; never commit or push automatically.
+- Work on one feature at a time.
+- Create one branch per feature; never commit or push automatically.
 - Keep PRs focused on one behavior or cohesive refactor.
 - Choose the simplest implementation that fully satisfies the requirements.
 - Make architectural decisions for the long term; do not introduce stopgaps intended to be replaced later.
@@ -36,13 +36,6 @@ After a PR is merged:
 Do not continue feature work from a stale branch after its PR has been merged.
 
 Use `scripts/sync-main.sh` and `scripts/start-feature.sh` for this workflow when the working tree has no tracked changes.
-
-## Current roadmap status
-
-- Completed: stabilization and table work through T5.
-- In progress: remove the unwanted rules/session feature.
-- Pending: classic casino visual system, calmer table composition, and responsive refinement.
-- Update this snapshot after each merge and remove planning entries when no longer needed.
 
 ## Local-file rule
 
