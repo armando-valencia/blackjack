@@ -29,6 +29,12 @@ class GameService:
         elif action == ControlMessageType.DEAL_INITIAL.value:
             self.game.deal_initial_hand()
             message = "Hand dealt."
+        elif action == ControlMessageType.RESTART_HAND.value:
+            self.game.deal_initial_hand()
+            message = "New hand started."
+        elif action == ControlMessageType.RETURN_TO_MENU.value:
+            self.game.reset_to_menu()
+            message = "Returned to menu."
         elif action == ControlMessageType.HIT.value:
             self.game.player_hit()
             message = "Hit accepted."

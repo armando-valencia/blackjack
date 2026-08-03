@@ -76,17 +76,17 @@ const ActionRail: React.FC<ActionRailProps> = ({
 	};
 
 	return (
-		<section aria-label="Round actions" className="sticky bottom-0 z-30 border-t border-table-border/50 bg-table-surface-raised/80 px-3 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:static md:px-5 md:py-4 md:pb-4">
-			<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+		<section aria-label="Round actions" className="shrink-0 sticky bottom-0 z-30 border-t border-table-border/50 bg-table-surface-raised/80 px-2 py-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] md:static md:px-4 md:py-3 md:pb-3">
+			<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
 				<div>
 					<p className="text-table-text text-sm font-semibold">Your move</p>
-					<p className="mt-0.5 text-xs text-table-muted" aria-live="polite">{getActionMessage()}</p>
+					<p className="mt-0.5 text-[0.7rem] text-table-muted" aria-live="polite">{getActionMessage()}</p>
 				</div>
 				<div className="flex justify-center sm:justify-end">{renderAction()}</div>
 			</div>
 
 			{gameStatus === GAME_STATUS.GAME_OVER && (
-				<dl className="mt-3 grid grid-cols-3 gap-2 border-t border-table-border/30 pt-3 text-center">
+				<dl className="mt-2 grid grid-cols-3 gap-2 border-t border-table-border/30 pt-2 text-center">
 					<div>
 						<dt className="text-table-subtle text-[0.65rem] uppercase tracking-wide">Dealer</dt>
 						<dd className="text-table-text font-semibold">{dealerScore}</dd>

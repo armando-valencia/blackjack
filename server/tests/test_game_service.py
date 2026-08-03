@@ -37,6 +37,43 @@ def test__execute_command__deals_hand_without_websocket_dependencies(monkeypatch
     assert result.state["dealer_score"] == 7
 
 
+def test__execute_command__restarts_a_configured_hand(monkeypatch):
+    service = GameService()
+    service.execute_command(
+        {"type": ControlMessageType.SET_PLAYER_COUNT.value, "num_players": 1}
+    )
+    ordered_deck = [
+        Card(Rank.NINE, Suit.DIAMONDS),
+        Card(Rank.SEVEN, Suit.CLUBS),
+        Card(Rank.TEN, Suit.SPADES),
+        Card(Rank.SIX, Suit.HEARTS),
+    ]
+    monkeypatch.setattr("game.logic.create_deck", lambda: ordered_deck.copy())
+
+    result = service.execute_command(
+        {"type": ControlMessageType.RESTART_HAND.value}
+    )
+
+    assert result.message == "New hand started."
+    assert len(result.state["players"]) == 1
+    assert result.state["game_status"] == GameStatus.PLAYING.value
+
+
+def test__execute_command__returns_to_the_main_menu():
+    service = GameService()
+    service.execute_command(
+        {"type": ControlMessageType.SET_PLAYER_COUNT.value, "num_players": 2}
+    )
+
+    result = service.execute_command(
+        {"type": ControlMessageType.RETURN_TO_MENU.value}
+    )
+
+    assert result.message == "Returned to menu."
+    assert result.state["players"] == []
+    assert result.state["game_status"] == GameStatus.WAITING.value
+
+
 def test__get_state__reveals_dealer_hand_after_game_over():
     service = GameService()
     service.game.dealer_hand = [Card(Rank.TEN, Suit.HEARTS), Card(Rank.SEVEN, Suit.SPADES)]

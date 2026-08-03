@@ -30,6 +30,13 @@ def validate_command(game: BlackjackGame, request: object) -> tuple[str, int | N
         validate_deal_command(game, message_type)
         return message_type, None
 
+    if message_type == ControlMessageType.RESTART_HAND.value:
+        validate_restart_command(game, message_type)
+        return message_type, None
+
+    if message_type == ControlMessageType.RETURN_TO_MENU.value:
+        return message_type, None
+
     validate_player_action(game, message_type)
     return message_type, None
 
@@ -60,6 +67,14 @@ def validate_deal_command(game: BlackjackGame, action: str) -> None:
     if not game.players:
         raise CommandValidationError(
             "Configure the players before dealing.",
+            action,
+        )
+
+
+def validate_restart_command(game: BlackjackGame, action: str) -> None:
+    if not game.players:
+        raise CommandValidationError(
+            "Configure the players before restarting the hand.",
             action,
         )
 

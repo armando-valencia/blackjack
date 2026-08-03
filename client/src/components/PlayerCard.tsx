@@ -116,8 +116,8 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentTurn, variant 
 	}
 
 	return (
-		<article className={`${PLAYER_BASE_CLASSES} p-4 md:p-6 ${getBorderClass()}`}>
-			<div className="flex items-start justify-between gap-3 mb-4">
+		<article className={`${PLAYER_BASE_CLASSES} p-3 md:p-4 ${getBorderClass()}`}>
+			<div className="mb-2 flex items-start justify-between gap-3 md:mb-3">
 				<div className="min-w-0 flex flex-wrap items-center gap-2">
 					<h3 className={`truncate text-base md:text-lg font-medium ${nameClass}`}>{player.name}</h3>
 					<span className="text-table-subtle text-xs">({roleLabel})</span>

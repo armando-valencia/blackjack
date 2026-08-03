@@ -63,6 +63,16 @@ class BlackjackGame:
         self.game_status = GameStatus.WAITING.value
         self.message = "Ready to deal!"
 
+    def reset_to_menu(self):
+        self.deck = create_deck()
+        self.players = []
+        self.dealer_hand = []
+        self.dealer_score = 0
+        self.game_status = GameStatus.WAITING.value
+        self.message = ""
+        self.current_player_index = 0
+        self.num_players = 0
+
     def deal_initial_hand(self):
         """Deal initial cards to all players and dealer"""
         if not self.players:

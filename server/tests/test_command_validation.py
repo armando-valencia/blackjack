@@ -73,6 +73,38 @@ def test__validate_command__accepts_deal_after_setup():
     assert player_count is None
 
 
+def test__validate_command__accepts_restart_after_setup():
+    game = create_configured_game()
+
+    command, player_count = validate_command(
+        game,
+        {"type": ControlMessageType.RESTART_HAND.value},
+    )
+
+    assert command == ControlMessageType.RESTART_HAND.value
+    assert player_count is None
+
+
+def test__validate_command__rejects_restart_without_setup():
+    game = BlackjackGame()
+
+    with pytest.raises(CommandValidationError, match="Configure the players"):
+        validate_command(game, {"type": ControlMessageType.RESTART_HAND.value})
+
+
+def test__validate_command__accepts_return_to_menu_during_a_round():
+    game = create_configured_game()
+    game.game_status = GameStatus.PLAYING.value
+
+    command, player_count = validate_command(
+        game,
+        {"type": ControlMessageType.RETURN_TO_MENU.value},
+    )
+
+    assert command == ControlMessageType.RETURN_TO_MENU.value
+    assert player_count is None
+
+
 def test__validate_command__rejects_deal_without_setup():
     game = BlackjackGame()
 
