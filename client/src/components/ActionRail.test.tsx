@@ -1,15 +1,12 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { GAME_RESULT, GAME_STATUS } from "../constants";
+import { GAME_STATUS } from "../constants";
 import ActionRail from "./ActionRail";
 
 afterEach(() => cleanup());
 
 const createActionRailProps = () => ({
 	gameStatus: GAME_STATUS.WAITING,
-	dealerScore: 0,
-	playerScore: null,
-	playerResult: null,
 	currentPlayerName: null,
 	onDeal: vi.fn(),
 	onHit: vi.fn(),
@@ -43,21 +40,15 @@ describe("ActionRail", () => {
 		expect(props.onStand).toHaveBeenCalledOnce();
 	});
 
-	it("shows the round result and replay action after the game", () => {
+	it("explains when another player is taking their turn", () => {
 		const props = {
 			...createActionRailProps(),
-			gameStatus: GAME_STATUS.GAME_OVER,
-			dealerScore: 18,
-			playerScore: 21,
-			playerResult: GAME_RESULT.WIN,
+			gameStatus: GAME_STATUS.PLAYING,
+			currentPlayerName: "Ivy",
 		};
 
 		render(<ActionRail {...props} />);
-		fireEvent.click(screen.getByRole("button", { name: "Play Again" }));
 
-		expect(screen.getByText("Dealer")).toBeTruthy();
-		expect(screen.getByText("18")).toBeTruthy();
-		expect(screen.getByText("You win")).toBeTruthy();
-		expect(props.onDeal).toHaveBeenCalledOnce();
+		expect(screen.getAllByText("Waiting for Ivy to act.")).toHaveLength(2);
 	});
 });
