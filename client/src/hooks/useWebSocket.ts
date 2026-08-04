@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import { CONNECTION_STATUS, SERVER_MESSAGE_TYPE } from "../constants";
 import type {
 	ConnectionStatus,
@@ -16,15 +16,70 @@ interface UseWebSocketReturn {
 	sendControlMessage: (type: ControlMessage["type"], numPlayers?: number) => void;
 }
 
+export interface WebSocketState {
+	game: MultiplayerGameState | null;
+	connectionStatus: ConnectionStatus;
+	errorMessage: string | null;
+	isActionPending: boolean;
+}
+
+export const WEBSOCKET_ACTION = {
+	SET_CONNECTION_STATUS: "set_connection_status",
+	SET_GAME: "set_game",
+	SET_ERROR: "set_error",
+	CLEAR_ERROR: "clear_error",
+	SET_ACTION_PENDING: "set_action_pending",
+	SET_ACTION_RESULT: "set_action_result",
+} as const;
+
+export type WebSocketAction =
+	| { type: typeof WEBSOCKET_ACTION.SET_CONNECTION_STATUS; status: ConnectionStatus }
+	| { type: typeof WEBSOCKET_ACTION.SET_GAME; game: MultiplayerGameState }
+	| { type: typeof WEBSOCKET_ACTION.SET_ERROR; message: string }
+	| { type: typeof WEBSOCKET_ACTION.CLEAR_ERROR }
+	| { type: typeof WEBSOCKET_ACTION.SET_ACTION_PENDING; isPending: boolean }
+	| { type: typeof WEBSOCKET_ACTION.SET_ACTION_RESULT; accepted: boolean; message: string };
+
+export const initialWebSocketState: WebSocketState = {
+	game: null,
+	connectionStatus: CONNECTION_STATUS.CONNECTING,
+	errorMessage: null,
+	isActionPending: false,
+};
+
+const assertUnreachable = (value: never): never => {
+	throw new Error(`Unhandled WebSocket action: ${String(value)}`);
+};
+
+export const webSocketReducer = (state: WebSocketState, action: WebSocketAction): WebSocketState => {
+	switch (action.type) {
+		case WEBSOCKET_ACTION.SET_CONNECTION_STATUS:
+			return { ...state, connectionStatus: action.status };
+		case WEBSOCKET_ACTION.SET_GAME:
+			return { ...state, game: action.game };
+		case WEBSOCKET_ACTION.SET_ERROR:
+			return { ...state, errorMessage: action.message };
+		case WEBSOCKET_ACTION.CLEAR_ERROR:
+			return { ...state, errorMessage: null };
+		case WEBSOCKET_ACTION.SET_ACTION_PENDING:
+			return { ...state, isActionPending: action.isPending };
+		case WEBSOCKET_ACTION.SET_ACTION_RESULT:
+			return {
+				...state,
+				isActionPending: false,
+				errorMessage: action.accepted ? null : action.message,
+			};
+		default:
+			return assertUnreachable(action);
+	}
+};
+
 const MAX_RECONNECT_ATTEMPTS = 5;
 const INITIAL_RECONNECT_DELAY_MS = 500;
 const MAX_RECONNECT_DELAY_MS = 4000;
 
 export const useWebSocket = (url: string): UseWebSocketReturn => {
-	const [game, setGame] = useState<MultiplayerGameState | null>(null);
-	const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>(CONNECTION_STATUS.CONNECTING);
-	const [errorMessage, setErrorMessage] = useState<string | null>(null);
-	const [isActionPending, setIsActionPending] = useState(false);
+	const [state, dispatch] = useReducer(webSocketReducer, initialWebSocketState);
 	const websocketRef = useRef<WebSocket | null>(null);
 	const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const reconnectAttemptRef = useRef(0);
@@ -35,8 +90,8 @@ export const useWebSocket = (url: string): UseWebSocketReturn => {
 
 		const scheduleReconnect = () => {
 			if (!isActive || reconnectAttemptRef.current >= MAX_RECONNECT_ATTEMPTS) {
-				setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
-				setErrorMessage("Unable to reconnect. Please try again later.");
+				dispatch({ type: WEBSOCKET_ACTION.SET_CONNECTION_STATUS, status: CONNECTION_STATUS.DISCONNECTED });
+				dispatch({ type: WEBSOCKET_ACTION.SET_ERROR, message: "Unable to reconnect. Please try again later." });
 				return;
 			}
 
@@ -45,26 +100,25 @@ export const useWebSocket = (url: string): UseWebSocketReturn => {
 				INITIAL_RECONNECT_DELAY_MS * 2 ** (reconnectAttemptRef.current - 1),
 				MAX_RECONNECT_DELAY_MS,
 			);
-			setConnectionStatus(CONNECTION_STATUS.RECONNECTING);
-			setErrorMessage("Connection lost. Reconnecting...");
+			dispatch({ type: WEBSOCKET_ACTION.SET_CONNECTION_STATUS, status: CONNECTION_STATUS.RECONNECTING });
+			dispatch({ type: WEBSOCKET_ACTION.SET_ERROR, message: "Connection lost. Reconnecting..." });
 			reconnectTimerRef.current = setTimeout(connect, reconnectDelay);
 		};
 
 		const connect = () => {
 			if (!isActive) return;
 
-			setConnectionStatus(
-				reconnectAttemptRef.current === 0
-					? CONNECTION_STATUS.CONNECTING
-					: CONNECTION_STATUS.RECONNECTING,
-			);
+			dispatch({
+				type: WEBSOCKET_ACTION.SET_CONNECTION_STATUS,
+				status: reconnectAttemptRef.current === 0 ? CONNECTION_STATUS.CONNECTING : CONNECTION_STATUS.RECONNECTING,
+			});
 			const websocket = new WebSocket(url);
 			websocketRef.current = websocket;
 
 			websocket.onopen = () => {
 				reconnectAttemptRef.current = 0;
-				setConnectionStatus(CONNECTION_STATUS.CONNECTED);
-				setErrorMessage(null);
+				dispatch({ type: WEBSOCKET_ACTION.SET_CONNECTION_STATUS, status: CONNECTION_STATUS.CONNECTED });
+				dispatch({ type: WEBSOCKET_ACTION.CLEAR_ERROR });
 			};
 
 			websocket.onmessage = (event: MessageEvent) => {
@@ -75,29 +129,32 @@ export const useWebSocket = (url: string): UseWebSocketReturn => {
 						serverMessage.type === SERVER_MESSAGE_TYPE.GAME_STATE ||
 						serverMessage.type === SERVER_MESSAGE_TYPE.GAME_OVER
 					) {
-						setGame(serverMessage);
+						dispatch({ type: WEBSOCKET_ACTION.SET_GAME, game: serverMessage });
 					} else if (serverMessage.type === SERVER_MESSAGE_TYPE.ERROR) {
-						setIsActionPending(false);
-						setErrorMessage(serverMessage.message);
+						dispatch({ type: WEBSOCKET_ACTION.SET_ACTION_PENDING, isPending: false });
+						dispatch({ type: WEBSOCKET_ACTION.SET_ERROR, message: serverMessage.message });
 					} else if (serverMessage.type === SERVER_MESSAGE_TYPE.ACTION_RESULT) {
-						setIsActionPending(false);
-						setErrorMessage(serverMessage.accepted ? null : serverMessage.message);
+						dispatch({
+							type: WEBSOCKET_ACTION.SET_ACTION_RESULT,
+							accepted: serverMessage.accepted,
+							message: serverMessage.message,
+						});
 					}
 				} catch {
-					setIsActionPending(false);
-					setErrorMessage("Failed to parse server message");
+					dispatch({ type: WEBSOCKET_ACTION.SET_ACTION_PENDING, isPending: false });
+					dispatch({ type: WEBSOCKET_ACTION.SET_ERROR, message: "Failed to parse server message" });
 				}
 			};
 
 			websocket.onerror = () => {
-				setErrorMessage("Connection error. Retrying...");
+				dispatch({ type: WEBSOCKET_ACTION.SET_ERROR, message: "Connection error. Retrying..." });
 			};
 
 			websocket.onclose = () => {
 				if (websocketRef.current === websocket) {
 					websocketRef.current = null;
 				}
-				setIsActionPending(false);
+				dispatch({ type: WEBSOCKET_ACTION.SET_ACTION_PENDING, isPending: false });
 				scheduleReconnect();
 			};
 		};
@@ -117,23 +174,23 @@ export const useWebSocket = (url: string): UseWebSocketReturn => {
 
 	const sendControlMessage = (type: ControlMessageType, numPlayers?: number) => {
 		const websocket = websocketRef.current;
-		if (websocket && websocket.readyState === WebSocket.OPEN && !isActionPending) {
+		if (websocket && websocket.readyState === WebSocket.OPEN && !state.isActionPending) {
 			const message: ControlMessage = { type, ...(numPlayers && { num_players: numPlayers }) };
-			setIsActionPending(true);
+			dispatch({ type: WEBSOCKET_ACTION.SET_ACTION_PENDING, isPending: true });
 			try {
 				websocket.send(JSON.stringify(message));
 			} catch {
-				setIsActionPending(false);
-				setErrorMessage("Unable to send command. Please try again.");
+				dispatch({ type: WEBSOCKET_ACTION.SET_ACTION_PENDING, isPending: false });
+				dispatch({ type: WEBSOCKET_ACTION.SET_ERROR, message: "Unable to send command. Please try again." });
 			}
 		}
 	};
 
 	return {
-		game,
-		connectionStatus,
-		errorMessage,
-		isActionPending,
+		game: state.game,
+		connectionStatus: state.connectionStatus,
+		errorMessage: state.errorMessage,
+		isActionPending: state.isActionPending,
 		sendControlMessage,
 	};
 };
