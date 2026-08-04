@@ -7,13 +7,15 @@ A local multiplayer Blackjack game with a React frontend and Python WebSocket ba
 ### Prerequisites
 
 - Python 3.12 or newer
-- Node.js 18 or newer
+- Node.js 22.x (the repo includes `.nvmrc`)
 
 Run the following from the repository root.
 
 ### 1. Install dependencies
 
 ```bash
+nvm install
+nvm use
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r server/requirements.txt
@@ -44,12 +46,12 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ## Project Layout
 
-| Path | Purpose |
-| --- | --- |
-| `client/` | React and Vite frontend. |
-| `server/` | Python game rules and WebSocket backend. |
-| `server/tests/` | Python rule and service tests. |
-| `scripts/` | Local verification and Git workflow helpers. |
+| Path            | Purpose                                      |
+| --------------- | -------------------------------------------- |
+| `client/`       | React and Vite frontend.                     |
+| `server/`       | Python game rules and WebSocket backend.     |
+| `server/tests/` | Python rule and service tests.               |
+| `scripts/`      | Local verification and Git workflow helpers. |
 
 ## Development Commands
 
