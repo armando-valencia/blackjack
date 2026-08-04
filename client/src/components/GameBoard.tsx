@@ -1,6 +1,7 @@
 import React from "react";
 import DealerSurface from "./DealerSurface";
 import GameNavigation from "./GameNavigation";
+import GameOverModal from "./GameOverModal";
 import GameMessage from "./GameMessage";
 import ActionRail from "./ActionRail";
 import PlayerCard from "./PlayerCard";
@@ -73,19 +74,28 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, onDeal, onRestart, onReturn
 
 				</div>
 
-			<ActionRail
-				gameStatus={game.game_status}
-				dealerScore={game.dealer_score}
-				playerScore={humanPlayer?.score ?? null}
-				playerResult={humanPlayer?.result ?? null}
-				currentPlayerName={game.players.find((player) => player.player_id === game.current_player_index)?.name ?? null}
-				onDeal={onDeal}
-				onHit={onHit}
-				onStand={onStand}
-				isHumanTurn={isHumanTurn || false}
-				isActionPending={isActionPending}
-			/>
+			{game.game_status !== GAME_STATUS.GAME_OVER && (
+				<ActionRail
+					gameStatus={game.game_status}
+					currentPlayerName={game.players.find((player) => player.player_id === game.current_player_index)?.name ?? null}
+					onDeal={onDeal}
+					onHit={onHit}
+					onStand={onStand}
+					isHumanTurn={isHumanTurn || false}
+					isActionPending={isActionPending}
+				/>
+			)}
 			</div>
+
+			{game.game_status === GAME_STATUS.GAME_OVER && (
+				<GameOverModal
+					dealerScore={game.dealer_score}
+					players={game.players}
+					onPlayAgain={onRestart}
+					onReturnToMenu={onReturnToMenu}
+					isActionPending={isActionPending}
+				/>
+			)}
 		</section>
 	);
 };

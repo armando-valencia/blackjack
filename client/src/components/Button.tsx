@@ -24,7 +24,7 @@ const BUTTON_BASE_CLASSES = `
 `;
 const BUTTON_VARIANT_CLASSES = {
 	[BUTTON_VARIANT.DEAL]: "bg-table-active text-table-page-start hover:bg-[#f6d676]",
-	[BUTTON_VARIANT.HIT]: "bg-table-active-bot text-table-page-start hover:bg-[#cde5d7]",
+	[BUTTON_VARIANT.HIT]: "bg-table-hit text-table-page-start hover:bg-table-hit-hover",
 	[BUTTON_VARIANT.STAND]: "bg-table-surface-raised text-table-text hover:bg-table-surface",
 };
 
