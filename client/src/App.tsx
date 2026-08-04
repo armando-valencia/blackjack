@@ -30,7 +30,7 @@ function App() {
 
 				{showPlayerSelect && (
 					<div className="flex min-h-0 flex-1 items-center justify-center">
-						<PlayerSelect onSelectPlayerCount={handlePlayerCountSelect} />
+						<PlayerSelect onSelectPlayerCount={handlePlayerCountSelect} isActionPending={isActionPending} />
 					</div>
 				)}
 
